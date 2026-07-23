@@ -1,0 +1,7 @@
+{
+    "Auth": true,
+    "Booking": true,
+    "Profile": true,
+    "Finance": true,
+    "Settings": true
+}
