@@ -3,5 +3,6 @@
     "Booking": true,
     "Profile": true,
     "Finance": true,
-    "Settings": true
+    "Settings": true,
+    "Room": true
 }
