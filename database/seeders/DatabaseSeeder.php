@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'admin@penginapan.com'],
             [
-                'name'              => 'Super Admin',
+                'name'              => 'Admin',
                 'email'             => 'admin@penginapan.com',
                 'password'          => Hash::make('admin123'),
                 'role'              => 'admin',
@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'manager@penginapan.com'],
             [
-                'name'              => 'Manager Admin',
+                'name'              => 'Manager',
                 'email'             => 'manager@penginapan.com',
                 'password'          => Hash::make('manager123'),
                 'role'              => 'admin',

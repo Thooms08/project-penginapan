@@ -5,104 +5,95 @@
 @section('content')
 
     {{-- ── Welcome Banner ── --}}
-    <div style="background:linear-gradient(135deg,#eab308 0%,#facc15 100%);
-                border-radius:1.25rem;padding:1.75rem 2rem;margin-bottom:2rem;
-                display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <div class="rounded-2xl p-7 mb-8 flex items-center justify-between flex-wrap gap-4"
+         style="background:linear-gradient(135deg,#eab308 0%,#facc15 100%);">
         <div>
-            <p style="color:rgba(0,0,0,0.45);font-size:0.85rem;margin:0 0 0.3rem;">Selamat datang 👋</p>
-            <h1 style="color:#713f12;font-size:1.5rem;font-weight:800;margin:0;letter-spacing:-0.02em;">
+            <p class="text-sm mb-1" style="color:rgba(0,0,0,0.45);">Selamat datang 👋</p>
+            <h1 class="text-2xl font-extrabold tracking-tight" style="color:#713f12;">
                 {{ Auth::user()->name }}
             </h1>
-            <span style="display:inline-block;margin-top:0.5rem;
-                         background:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.5);
-                         padding:0.2rem 0.75rem;border-radius:999px;
-                         font-size:0.75rem;font-weight:600;color:#713f12;">
+            <span class="inline-block mt-2 px-3 py-0.5 rounded-full text-[0.75rem] font-semibold"
+                  style="background:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.5);color:#713f12;">
                 {{ ucfirst(Auth::user()->role) }}
             </span>
         </div>
         @if(Auth::user()->avatar)
             <img src="{{ Auth::user()->avatar }}" alt="avatar"
-                style="width:60px;height:60px;border-radius:50%;object-fit:cover;
-                       border:3px solid rgba(255,255,255,0.5);">
+                class="w-[60px] h-[60px] rounded-full object-cover"
+                style="border:3px solid rgba(255,255,255,0.5);">
         @else
-            <div style="width:60px;height:60px;border-radius:50%;
-                         background:rgba(255,255,255,0.3);border:3px solid rgba(255,255,255,0.5);
-                         display:flex;align-items:center;justify-content:center;">
-                <span style="color:#713f12;font-size:1.3rem;font-weight:800;">
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                </span>
+            <div class="w-[60px] h-[60px] rounded-full flex items-center justify-center text-[1.3rem] font-extrabold"
+                 style="background:rgba(255,255,255,0.3);border:3px solid rgba(255,255,255,0.5);color:#713f12;">
+                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
             </div>
         @endif
     </div>
 
-    {{-- ── Section Title ── --}}
-    <div style="margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;">
+    {{-- ── Section title ── --}}
+    <div class="flex items-center justify-between mb-5">
         <div>
-            <h2 style="font-size:1.1rem;font-weight:700;color:#0f172a;margin:0;">Kamar Tersedia</h2>
-            <p style="color:#64748b;font-size:0.82rem;margin:0.25rem 0 0;">Temukan kamar yang sesuai kebutuhan Anda.</p>
+            <h2 class="text-lg font-bold text-slate-900">Kamar Tersedia</h2>
+            <p class="text-[0.82rem] text-slate-500 mt-0.5">Temukan kamar yang sesuai kebutuhan Anda.</p>
         </div>
-        <span style="font-size:0.78rem;font-weight:600;background:#fefce8;color:#713f12;
-                     padding:0.3rem 0.75rem;border-radius:999px;border:1px solid #fef9c3;">
+        <span class="text-[0.78rem] font-semibold px-3 py-1 rounded-full"
+              style="background:#fefce8;color:#713f12;border:1px solid #fef9c3;">
             3 kamar
         </span>
     </div>
 
-    {{-- ── Room Cards ── --}}
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;">
+    {{-- ── Room cards ── --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         @foreach([
             ['name' => 'Kamar Deluxe',   'price' => '350.000', 'bed' => 'King Bed',   'available' => true,  'tag' => 'Populer'],
             ['name' => 'Kamar Superior', 'price' => '250.000', 'bed' => 'Queen Bed',  'available' => true,  'tag' => ''],
             ['name' => 'Kamar Standar',  'price' => '150.000', 'bed' => 'Single Bed', 'available' => false, 'tag' => ''],
         ] as $room)
-        <div style="background:#fff;border-radius:1rem;overflow:hidden;
-                    box-shadow:0 1px 4px rgba(0,0,0,0.06);border:1px solid #f1f5f9;
-                    transition:box-shadow 0.2s,transform 0.2s;"
-             onmouseover="this.style.boxShadow='0 8px 24px rgba(0,0,0,0.1)';this.style.transform='translateY(-2px)'"
-             onmouseout="this.style.boxShadow='0 1px 4px rgba(0,0,0,0.06)';this.style.transform='translateY(0)'">
 
-            <div style="height:160px;background:linear-gradient(135deg,#eab308 0%,#facc15 100%);
-                        display:flex;align-items:center;justify-content:center;position:relative;">
-                <svg style="width:48px;height:48px;color:rgba(0,0,0,0.2);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="room-card bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+
+            {{-- Gambar / placeholder --}}
+            <div class="relative h-40 flex items-center justify-center"
+                 style="background:linear-gradient(135deg,#eab308 0%,#facc15 100%);">
+                <svg class="w-12 h-12" style="color:rgba(0,0,0,0.18);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                         d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                 </svg>
                 @if($room['tag'])
-                    <div style="position:absolute;top:0.75rem;left:0.75rem;
-                                background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.4);
-                                padding:0.2rem 0.6rem;border-radius:999px;
-                                font-size:0.7rem;font-weight:700;color:#713f12;">
+                    <div class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full
+                                text-[0.7rem] font-bold"
+                         style="background:rgba(255,255,255,0.28);border:1px solid rgba(255,255,255,0.45);color:#713f12;">
                         ⭐ {{ $room['tag'] }}
                     </div>
                 @endif
             </div>
 
-            <div style="padding:1.25rem;">
-                <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:0.375rem;">
-                    <h3 style="font-size:0.95rem;font-weight:700;color:#0f172a;margin:0;">{{ $room['name'] }}</h3>
-                    <span style="flex-shrink:0;margin-left:0.5rem;padding:0.15rem 0.6rem;border-radius:999px;
-                                 font-size:0.7rem;font-weight:700;
-                                 {{ $room['available'] ? 'background:#dcfce7;color:#15803d;' : 'background:#fee2e2;color:#b91c1c;' }}">
+            {{-- Body --}}
+            <div class="p-5">
+                <div class="flex items-start justify-between mb-1.5">
+                    <h3 class="text-[0.95rem] font-bold text-slate-900">{{ $room['name'] }}</h3>
+                    <span class="shrink-0 ml-2 px-2 py-0.5 rounded-full text-[0.7rem] font-bold
+                                 {{ $room['available'] ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                         {{ $room['available'] ? 'Tersedia' : 'Penuh' }}
                     </span>
                 </div>
-                <p style="color:#94a3b8;font-size:0.8rem;margin:0 0 1rem;">{{ $room['bed'] }}</p>
-                <div style="display:flex;align-items:center;justify-content:space-between;">
+
+                <p class="text-[0.8rem] text-slate-400 mb-4">{{ $room['bed'] }}</p>
+
+                <div class="flex items-center justify-between">
                     <div>
-                        <span style="font-size:1.15rem;font-weight:800;color:#eab308;">Rp {{ $room['price'] }}</span>
-                        <span style="color:#94a3b8;font-size:0.75rem;">/malam</span>
+                        <span class="text-[1.15rem] font-extrabold" style="color:#eab308;">
+                            Rp {{ $room['price'] }}
+                        </span>
+                        <span class="text-[0.75rem] text-slate-400">/malam</span>
                     </div>
                     @if($room['available'])
-                        <button style="padding:0.5rem 1.1rem;border-radius:0.5rem;border:none;
-                                       background:#eab308;color:#713f12;font-size:0.82rem;
-                                       font-weight:600;cursor:pointer;transition:background 0.15s;"
-                                onmouseover="this.style.background='#ca8a04';this.style.color='#fff'"
-                                onmouseout="this.style.background='#eab308';this.style.color='#713f12'">
+                        <button class="btn-pesan px-4 py-2 rounded-lg text-[0.82rem] font-semibold border-none cursor-pointer transition-all">
                             Pesan
                         </button>
                     @else
-                        <button disabled style="padding:0.5rem 1.1rem;border-radius:0.5rem;border:none;
-                                               background:#f1f5f9;color:#94a3b8;font-size:0.82rem;
-                                               font-weight:600;cursor:not-allowed;">
+                        <button disabled
+                            class="px-4 py-2 rounded-lg text-[0.82rem] font-semibold
+                                   bg-slate-100 text-slate-400 cursor-not-allowed border-none">
                             Penuh
                         </button>
                     @endif
@@ -113,8 +104,13 @@
     </div>
 
     <style>
-        @media (max-width:900px) { div[style*="grid-template-columns:repeat(3,1fr)"] { grid-template-columns:repeat(2,1fr)!important; } }
-        @media (max-width:560px) { div[style*="grid-template-columns:repeat(3,1fr)"] { grid-template-columns:1fr!important; } }
+        /* Card hover — tidak bisa di Tailwind tanpa JIT/build */
+        .room-card { transition: box-shadow 0.2s, transform 0.2s; }
+        .room-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.1); transform: translateY(-2px); }
+
+        /* Tombol pesan */
+        .btn-pesan { background: #eab308; color: #713f12; }
+        .btn-pesan:hover { background: #ca8a04; color: #fff; }
     </style>
 
 @endsection

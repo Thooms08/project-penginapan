@@ -8,88 +8,96 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; }
 
-        .navbar {
-            background: #fff;
-            border-bottom: 1px solid #e2e8f0;
-            position: sticky; top: 0; z-index: 30;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+        /* ─── Navbar link aktif ─── */
+        .nav-active {
+            color: #eab308;
+            font-weight: 600;
         }
-        .navbar-inner {
-            max-width: 1200px; margin: 0 auto;
-            padding: 0 1.5rem; height: 64px;
-            display: flex; align-items: center; justify-content: space-between;
+        .nav-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #eab308;
+            display: inline-block;
+            flex-shrink: 0;
         }
+
+        /* ─── Logout button ─── */
         .logout-btn {
             display: flex; align-items: center; gap: 0.375rem;
-            padding: 0.5rem 0.875rem; border-radius: 0.625rem;
-            border: 1.5px solid #e2e8f0; background: transparent;
+            padding: 0.5rem 0.875rem;
+            border-radius: 0.625rem;
+            border: 1.5px solid #e2e8f0;
+            background: transparent;
             font-size: 0.82rem; font-weight: 600; color: #64748b;
-            cursor: pointer; text-decoration: none;
-            transition: border-color 0.15s, color 0.15s, background 0.15s;
+            cursor: pointer; transition: all 0.15s;
         }
         .logout-btn:hover { border-color: #fca5a5; color: #ef4444; background: #fef2f2; }
-        .main-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
-        footer { margin-top: 4rem; border-top: 1px solid #e2e8f0; padding: 1.5rem;
-                 text-align: center; font-size: 0.78rem; color: #94a3b8; }
-        @media (max-width: 640px) {
-            .main-wrap { padding: 1.25rem 1rem; }
-            .navbar-inner { padding: 0 1rem; }
-            .user-name { display: none; }
+
+        /* ─── Avatar visitor ─── */
+        .avatar-visitor {
+            width: 34px; height: 34px; border-radius: 9999px;
+            background: #eab308;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.78rem; font-weight: 700; color: #713f12;
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 min-h-screen">
 
-    <nav class="navbar">
-        <div class="navbar-inner">
-            <div style="display:flex;align-items:center;gap:0.625rem;">
-                <div style="width:34px;height:34px;border-radius:9px;background:#eab308;
-                             display:flex;align-items:center;justify-content:center;">
-                    <svg style="width:18px;height:18px;color:#713f12;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    {{-- ── Navbar ── --}}
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+
+            {{-- Brand --}}
+            <div class="flex items-center gap-2.5">
+                <div class="w-[34px] h-[34px] rounded-[9px] flex items-center justify-center"
+                     style="background:#eab308;">
+                    <svg class="w-[18px] h-[18px]" style="color:#713f12;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                     </svg>
                 </div>
-                <span style="font-size:1rem;font-weight:800;color:#0f172a;">Penginapan</span>
+                <span class="text-base font-extrabold text-slate-900">Penginapan</span>
             </div>
 
-            <div style="display:flex;align-items:center;gap:1.5rem;" class="nav-links">
+            {{-- Nav links (desktop) --}}
+            <div class="hidden sm:flex items-center gap-6">
                 <a href="{{ route('visitor.dashboard') }}"
-                   style="font-size:0.85rem;font-weight:600;color:#eab308;text-decoration:none;
-                          display:flex;align-items:center;gap:0.375rem;">
-                    <span style="width:7px;height:7px;border-radius:50%;background:#eab308;display:inline-block;"></span>
+                   class="nav-active flex items-center gap-1.5 text-[0.85rem] no-underline">
+                    <span class="nav-dot"></span>
                     Dashboard
                 </a>
-                <a href="#" style="font-size:0.85rem;font-weight:500;color:#64748b;text-decoration:none;">Kamar</a>
-                <a href="#" style="font-size:0.85rem;font-weight:500;color:#64748b;text-decoration:none;">Booking Saya</a>
+                <a href="#" class="text-[0.85rem] font-medium text-slate-500 no-underline hover:text-slate-800 transition-colors">
+                    Kamar
+                </a>
+                <a href="#" class="text-[0.85rem] font-medium text-slate-500 no-underline hover:text-slate-800 transition-colors">
+                    Booking Saya
+                </a>
             </div>
 
-            <div style="display:flex;align-items:center;gap:0.875rem;">
-                <div style="display:flex;align-items:center;gap:0.5rem;">
+            {{-- User + Logout --}}
+            <div class="flex items-center gap-3.5">
+                <div class="flex items-center gap-2">
                     @if(Auth::user()->avatar)
                         <img src="{{ Auth::user()->avatar }}" alt="avatar"
-                            style="width:34px;height:34px;border-radius:50%;object-fit:cover;
-                                   border:2px solid #fef9c3;">
+                            class="w-[34px] h-[34px] rounded-full object-cover"
+                            style="border:2px solid #fef9c3;">
                     @else
-                        <div style="width:34px;height:34px;border-radius:50%;background:#eab308;
-                                     display:flex;align-items:center;justify-content:center;">
-                            <span style="color:#713f12;font-size:0.78rem;font-weight:700;">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                            </span>
+                        <div class="avatar-visitor">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                         </div>
                     @endif
-                    <span class="user-name" style="font-size:0.85rem;font-weight:600;color:#374151;">
+                    <span class="hidden md:block text-[0.85rem] font-semibold text-slate-700">
                         {{ Auth::user()->name }}
                     </span>
                 </div>
 
-                <form method="POST" action="{{ route('logout') }}" style="margin:0;">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="logout-btn">
-                        <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                         </svg>
@@ -100,11 +108,13 @@
         </div>
     </nav>
 
-    <div class="main-wrap">
+    {{-- ── Content ── --}}
+    <main class="max-w-[1200px] mx-auto px-6 py-8">
         @yield('content')
-    </div>
+    </main>
 
-    <footer>
+    {{-- ── Footer ── --}}
+    <footer class="mt-16 border-t border-slate-200 py-6 text-center text-[0.78rem] text-slate-400">
         &copy; {{ date('Y') }} Penginapan. All rights reserved.
     </footer>
 

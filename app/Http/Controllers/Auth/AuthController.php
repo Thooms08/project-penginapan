@@ -157,11 +157,13 @@ class AuthController extends Controller
 
     /**
      * Refresh captcha via AJAX (return JSON).
+     * Menggunakan POST + CSRF untuk menghindari masalah session pada GET request.
      */
     public function refreshCaptcha(Request $request)
     {
         $captcha = $this->generateCaptcha();
-        session(['login_captcha' => $captcha]);
+        $request->session()->put('login_captcha', $captcha);
+
         return response()->json(['captcha' => $captcha]);
     }
 }
