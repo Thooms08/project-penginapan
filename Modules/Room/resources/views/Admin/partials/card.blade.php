@@ -64,10 +64,36 @@
             </div>
 
             {{-- Harga --}}
-            <p class="text-[1.1rem] font-extrabold mb-1" style="color:#eab308;">
-                {{ $room->formatted_price }}
-            </p>
-            <p class="text-[0.72rem] text-slate-400 -mt-0.5">/malam</p>
+            @if($room->has_discount)
+                {{-- Harga asli dicoret --}}
+                <p class="text-[0.8rem] font-medium text-slate-400 mb-0.5"
+                   style="text-decoration:line-through;">
+                    {{ $room->formatted_price }}
+                </p>
+                {{-- Harga setelah diskon (asumsi syarat malam terpenuhi) --}}
+                <p class="text-[1.1rem] font-extrabold text-green-600 leading-tight">
+                    Rp {{ number_format($room->getPriceAfterDiscount(PHP_INT_MAX), 0, ',', '.') }}
+                </p>
+                {{-- Badge hemat --}}
+                <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                    <span class="text-[0.72rem] text-slate-400">/malam</span>
+                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full
+                                 text-[0.62rem] font-bold bg-green-100 text-green-700"
+                          style="border:1px solid #bbf7d0;">
+                        Hemat {{ $room->formatted_discount }}
+                    </span>
+                </div>
+                @if($room->discount_min_nights > 0)
+                    <p class="text-[0.65rem] text-slate-400 mt-0.5">
+                        Min. {{ $room->discount_min_nights }} malam
+                    </p>
+                @endif
+            @else
+                <p class="text-[1.1rem] font-extrabold leading-tight" style="color:#eab308;">
+                    {{ $room->formatted_price }}
+                </p>
+                <p class="text-[0.72rem] text-slate-400 mt-0.5">/malam</p>
+            @endif
         </div>
 
         {{-- Divider --}}

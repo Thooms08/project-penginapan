@@ -296,6 +296,66 @@
                 @error('photos.*')<p class="error-msg mt-2">{{ $message }}</p>@enderror
             </div>
 
+            {{-- Diskon --}}
+            <div class="form-card">
+                <h3 class="text-[0.9rem] font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4" style="color:#eab308;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a2 2 0 012-2z"/>
+                    </svg>
+                    Pengaturan Diskon
+                </h3>
+
+                {{-- Tipe diskon --}}
+                <div class="mb-3">
+                    <label class="form-label" for="discount_type">Tipe Diskon</label>
+                    <select id="discount_type" name="discount_type"
+                            class="form-select" onchange="toggleDiscountFields()">
+                        <option value="none"       {{ old('discount_type','none') === 'none'       ? 'selected':'' }}>Tidak Ada</option>
+                        <option value="percentage" {{ old('discount_type') === 'percentage'        ? 'selected':'' }}>Persentase (%)</option>
+                        <option value="fixed"      {{ old('discount_type') === 'fixed'             ? 'selected':'' }}>Nominal (Rp)</option>
+                    </select>
+                    <p class="form-hint">Pilih cara perhitungan diskon</p>
+                </div>
+
+                {{-- Detail diskon (hidden jika none) --}}
+                <div id="discountFields" class="{{ old('discount_type','none') === 'none' ? 'hidden' : '' }} flex flex-col gap-3">
+                    <div>
+                        <label class="form-label" for="discount_value">
+                            Nilai Diskon
+                            <span id="discountUnit" class="font-normal text-slate-400 text-[0.78rem]">
+                                {{ old('discount_type') === 'percentage' ? '(%)' : '(Rp)' }}
+                            </span>
+                        </label>
+                        <input id="discount_value" name="discount_value" type="number"
+                               value="{{ old('discount_value', 0) }}"
+                               min="0" step="any"
+                               placeholder="cth. 15"
+                               class="form-input {{ $errors->has('discount_value') ? 'is-error':'' }}">
+                        @error('discount_value')<p class="error-msg">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="form-label" for="discount_min_nights">
+                            Minimal Malam
+                        </label>
+                        <input id="discount_min_nights" name="discount_min_nights" type="number"
+                               value="{{ old('discount_min_nights', 0) }}"
+                               min="0" step="1"
+                               class="form-input">
+                        <p class="form-hint">
+                            0 = berlaku semua booking.
+                            Isi angka untuk diskon khusus (cth. 3 = min. 3 malam).
+                        </p>
+                    </div>
+
+                    {{-- Preview perhitungan --}}
+                    <div id="discountPreview"
+                         class="rounded-xl px-4 py-3 text-[0.8rem]"
+                         style="background:#fefce8;border:1px solid #fef9c3;display:none;">
+                    </div>
+                </div>
+            </div>
+
             {{-- Action buttons --}}
             <div class="form-card">
                 <button type="submit"
@@ -379,34 +439,44 @@ function escHtml(str) {
 }
 
 /* ── Photo upload preview ────────────────────────── */
+/*
+ * Pendekatan: simpan File objects di array selectedFiles.
+ * Saat submit, inject via hidden input menggunakan DataTransfer.
+ * Reset dilakukan SETELAH DataTransfer selesai (synchronous).
+ */
 let selectedFiles = [];
 
 function handlePhotoChange(event) {
-    const newFiles = Array.from(event.target.files);
-    selectedFiles  = selectedFiles.concat(newFiles);
+    // Tambahkan file baru ke array, JANGAN reset input dulu
+    Array.from(event.target.files).forEach(f => selectedFiles.push(f));
     renderPreviews();
-    // Reset input agar bisa pilih file yang sama lagi
-    event.target.value = '';
+    // Reset input SETELAH file sudah masuk ke selectedFiles
+    // Gunakan setTimeout agar tidak race condition
+    setTimeout(() => { event.target.value = ''; }, 0);
 }
 
 function removePhoto(index) {
     selectedFiles.splice(index, 1);
     renderPreviews();
-    syncFilesInput();
 }
 
 function renderPreviews() {
     const grid = document.getElementById('photoPreview');
     grid.innerHTML = '';
+
+    if (selectedFiles.length === 0) return;
+
     selectedFiles.forEach((file, i) => {
         const reader = new FileReader();
         reader.onload = function(e) {
             const item = document.createElement('div');
             item.className = 'photo-preview-item' + (i === 0 ? ' is-cover' : '');
+            item.dataset.index = i;
             item.innerHTML = `
                 <img src="${e.target.result}" alt="">
                 ${i === 0 ? '<span class="cover-badge">Cover</span>' : ''}
-                <button type="button" class="remove-btn" onclick="removePhoto(${i})" title="Hapus foto">
+                <button type="button" class="remove-btn"
+                    onclick="removePhoto(${i})" title="Hapus foto">
                     <svg style="width:10px;height:10px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -416,13 +486,6 @@ function renderPreviews() {
         };
         reader.readAsDataURL(file);
     });
-    syncFilesInput();
-}
-
-function syncFilesInput() {
-    const dt = new DataTransfer();
-    selectedFiles.forEach(f => dt.items.add(f));
-    document.getElementById('photos').files = dt.files;
 }
 
 // Drag & drop
@@ -432,9 +495,57 @@ zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
 zone.addEventListener('drop', e => {
     e.preventDefault();
     zone.classList.remove('dragover');
-    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-    selectedFiles = selectedFiles.concat(files);
+    Array.from(e.dataTransfer.files)
+        .filter(f => f.type.startsWith('image/'))
+        .forEach(f => selectedFiles.push(f));
     renderPreviews();
+});
+
+// Intercept form submit — inject selectedFiles ke FormData
+document.getElementById('roomForm').addEventListener('submit', function(e) {
+    if (selectedFiles.length === 0) return; // tidak ada foto, biarkan normal
+
+    e.preventDefault();
+
+    const form = this;
+    const fd   = new FormData(form);
+
+    // Hapus field photos[] yang kosong dari form asli
+    fd.delete('photos[]');
+
+    // Tambahkan file dari selectedFiles
+    selectedFiles.forEach(function(file) {
+        fd.append('photos[]', file, file.name);
+    });
+
+    // Submit via fetch
+    fetch(form.action, {
+        method: 'POST',
+        body: fd,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(resp) {
+        if (resp.redirected) {
+            window.location.href = resp.url;
+        } else if (resp.ok) {
+            return resp.text().then(function(html) {
+                // Jika response adalah HTML (redirect tidak ter-detect), navigate
+                window.location.href = resp.url || '{{ route("admin.rooms.index") }}';
+            });
+        } else {
+            // Validasi error — reload halaman dengan response HTML
+            return resp.text().then(function(html) {
+                document.open();
+                document.write(html);
+                document.close();
+                window.history.pushState({}, '', form.action);
+            });
+        }
+    })
+    .catch(function() {
+        // Fallback: submit biasa tanpa foto
+        form.submit();
+    });
 });
 
 // Description character counter
@@ -443,6 +554,67 @@ const descCt = document.getElementById('descCount');
 function updateCount() { descCt.textContent = descTA.value.length; }
 descTA.addEventListener('input', updateCount);
 updateCount();
+
+/* ── Discount toggle ─────────────────────────────── */
+function toggleDiscountFields() {
+    const type    = document.getElementById('discount_type').value;
+    const fields  = document.getElementById('discountFields');
+    const unit    = document.getElementById('discountUnit');
+    fields.classList.toggle('hidden', type === 'none');
+    if (type === 'percentage') unit.textContent = '(%)';
+    else if (type === 'fixed') unit.textContent = '(Rp)';
+    updateDiscountPreview();
+}
+
+function updateDiscountPreview() {
+    const type    = document.getElementById('discount_type').value;
+    const value   = parseFloat(document.getElementById('discount_value').value) || 0;
+    const minN    = parseInt(document.getElementById('discount_min_nights').value) || 0;
+    const price   = parseFloat(document.getElementById('price').value) || 0;
+    const preview = document.getElementById('discountPreview');
+
+    if (type === 'none' || value <= 0 || price <= 0) { preview.style.display = 'none'; return; }
+
+    let discounted = price;
+    if (type === 'percentage') discounted = price - (price * value / 100);
+    else discounted = price - value;
+    discounted = Math.max(0, discounted);
+
+    const fmt    = n => 'Rp\u00a0' + Math.round(n).toLocaleString('id-ID');
+    const saving = type === 'percentage'
+        ? 'Hemat ' + value + '%'
+        : 'Hemat ' + fmt(value);
+
+    let minInfo = minN > 0
+        ? `<span style="font-size:0.72rem;color:#94a3b8;margin-top:2px;display:block;">Berlaku min. <strong>${minN}</strong> malam</span>`
+        : '';
+
+    preview.innerHTML = `
+        <div style="display:flex;align-items:flex-end;gap:0.5rem;flex-wrap:wrap;">
+            <span style="font-size:0.8rem;color:#94a3b8;text-decoration:line-through;font-weight:500;">
+                ${fmt(price)}
+            </span>
+            <span style="font-size:1.05rem;font-weight:800;color:#16a34a;">
+                ${fmt(discounted)}
+            </span>
+            <span style="font-size:0.65rem;font-weight:700;color:#15803d;
+                         background:#dcfce7;border:1px solid #bbf7d0;
+                         padding:1px 7px;border-radius:999px;line-height:1.8;">
+                ${saving}
+            </span>
+        </div>
+        <span style="font-size:0.72rem;color:#64748b;">/malam</span>
+        ${minInfo}
+    `;
+    preview.style.display = 'block';
+}
+
+// Attach live preview
+['discount_type','discount_value','discount_min_nights','price'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateDiscountPreview);
+});
+toggleDiscountFields(); // init
 
 // Restore old facility input on validation error
 @if(old('facilities'))

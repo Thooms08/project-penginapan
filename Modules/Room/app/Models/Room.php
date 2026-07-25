@@ -12,14 +12,17 @@ class Room extends Model
 
     protected $fillable = [
         'uuid', 'name', 'capacity', 'price', 'description', 'status',
+        'discount_type', 'discount_value', 'discount_min_nights',
     ];
 
     protected $casts = [
-        'price'    => 'decimal:2',
-        'capacity' => 'integer',
+        'price'                => 'decimal:2',
+        'capacity'             => 'integer',
+        'discount_value'       => 'decimal:2',
+        'discount_min_nights'  => 'integer',
     ];
 
-    // Auto-generate UUID saat create
+    // ── Auto-generate UUID ────────────────────────
     protected static function booted(): void
     {
         static::creating(function (Room $room) {
@@ -45,7 +48,7 @@ class Room extends Model
         return $this->hasOne(RoomPhoto::class)->where('is_cover', true);
     }
 
-    // ── Accessor ──────────────────────────────────
+    // ── Accessor harga ────────────────────────────
     public function getFormattedPriceAttribute(): string
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');
@@ -54,5 +57,44 @@ class Room extends Model
     public function getIsAvailableAttribute(): bool
     {
         return $this->status === 'available';
+    }
+
+    public function getHasDiscountAttribute(): bool
+    {
+        return $this->discount_type !== 'none' && $this->discount_value > 0;
+    }
+
+    /**
+     * Hitung harga setelah diskon untuk N malam.
+     * Jika malam < discount_min_nights, diskon tidak berlaku.
+     */
+    public function getPriceAfterDiscount(int $nights = 1): float
+    {
+        if (!$this->has_discount) {
+            return (float) $this->price;
+        }
+
+        if ($this->discount_min_nights > 0 && $nights < $this->discount_min_nights) {
+            return (float) $this->price;
+        }
+
+        if ($this->discount_type === 'percentage') {
+            $discount = $this->price * ($this->discount_value / 100);
+            return max(0, (float) ($this->price - $discount));
+        }
+
+        // fixed
+        return max(0, (float) ($this->price - $this->discount_value));
+    }
+
+    public function getFormattedDiscountAttribute(): string
+    {
+        if (!$this->has_discount) return '';
+
+        if ($this->discount_type === 'percentage') {
+            return number_format($this->discount_value, 0) . '%';
+        }
+
+        return 'Rp ' . number_format($this->discount_value, 0, ',', '.');
     }
 }
