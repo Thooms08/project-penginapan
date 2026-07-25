@@ -7,19 +7,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    {{-- SweetAlert2 --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         /* ─── Font ─────────────────────────────────── */
         body { font-family: 'Inter', sans-serif; }
 
-        /* ─── Warna tema kuning (CSS vars) ─────────── */
+        /* ─── Tema kuning ───────────────────────────── */
         :root {
-            --y:     #eab308;   /* yellow-500  */
-            --yd:    #ca8a04;   /* yellow-600  */
-            --yl:    #facc15;   /* yellow-400  */
+            --y:     #eab308;
+            --yd:    #ca8a04;
+            --yl:    #facc15;
             --y50:   #fefce8;
             --y100:  #fef9c3;
-            --ytext: #713f12;   /* teks di atas kuning */
-            --sbg:   #1a1500;   /* sidebar bg  */
+            --ytext: #713f12;
+            --sbg:   #1a1500;
             --ssep:  rgba(255,255,255,0.08);
             --smut:  rgba(255,255,255,0.5);
         }
@@ -28,7 +32,14 @@
         .sidebar {
             width: 260px;
             background: var(--sbg);
-            transition: transform 0.25s ease;
+            transition: transform 0.28s cubic-bezier(0.4,0,0.2,1),
+                        width 0.28s cubic-bezier(0.4,0,0.2,1);
+            overflow: hidden;
+        }
+        /* State: sidebar ditutup di desktop (collapse) */
+        .sidebar.collapsed {
+            width: 0;
+            transform: translateX(0);
         }
         .sidebar-sep-b { border-bottom: 1px solid var(--ssep); }
         .sidebar-sep-t { border-top:    1px solid var(--ssep); }
@@ -43,43 +54,96 @@
             background: transparent; border: none;
             cursor: pointer; width: 100%; text-align: left;
             transition: background 0.15s, color 0.15s;
+            white-space: nowrap;
         }
         .nav-item:hover  { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
         .nav-item.active { background: var(--y); color: var(--ytext); font-weight: 600; }
 
-        /* ─── Section label di nav ───────────────────── */
         .nav-label {
             font-size: 0.67rem; font-weight: 700;
             color: var(--smut);
             letter-spacing: 0.08em; text-transform: uppercase;
             padding-left: 0.4rem; margin-bottom: 0.4rem;
+            white-space: nowrap;
         }
 
-        /* ─── Avatar initials ────────────────────────── */
+        /* ─── Avatar ────────────────────────────────── */
         .avatar-yellow {
             width: 34px; height: 34px; border-radius: 9999px;
-            background: var(--y);
+            background: var(--y); flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
             font-size: 0.8rem; font-weight: 700; color: var(--ytext);
-            flex-shrink: 0;
         }
         .avatar-yellow-lg {
             width: 40px; height: 40px; border-radius: 11px;
-            background: var(--y);
+            background: var(--y); flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
         }
 
-        /* ─── Hamburger button ──────────────────────── */
-        #hamburgerBtn { display: none; }
+        /* ─── Layout: topbar & content mengikuti lebar sidebar ─── */
+        .topbar, .main-wrap {
+            margin-left: 260px;
+            transition: margin-left 0.28s cubic-bezier(0.4,0,0.2,1);
+        }
+        body.sidebar-collapsed .topbar,
+        body.sidebar-collapsed .main-wrap {
+            margin-left: 0;
+        }
 
-        /* ─── Responsive ────────────────────────────── */
+        /* ─── Toggle button (hamburger / arrow) ─── */
+        .sidebar-toggle-btn {
+            width: 36px; height: 36px; border-radius: 8px;
+            border: 1px solid #e2e8f0; background: #f8fafc;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; flex-shrink: 0;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .sidebar-toggle-btn:hover { background: #fff; border-color: #cbd5e1; }
+
+        /* ─── Mobile overlay ────────────────────────── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 35;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(2px);
+        }
+        .sidebar-overlay.show { display: block; }
+
+        /* ─── Responsive: mobile (≤1024px) ─────────── */
         @media (max-width: 1024px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0); }
-            .topbar-offset { margin-left: 0 !important; }
-            .content-offset { margin-left: 0 !important; }
-            #hamburgerBtn { display: flex; }
+            /* Di mobile sidebar selalu off-canvas (translate) */
+            .sidebar {
+                width: 260px !important;      /* jangan collapse di mobile */
+                transform: translateX(-100%);  /* default tersembunyi */
+                position: fixed;
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            /* Topbar & main tidak pakai margin di mobile */
+            .topbar, .main-wrap {
+                margin-left: 0 !important;
+            }
+        }
+
+        /* ─── SweetAlert custom theme ───────────────── */
+        .swal-confirm-btn {
+            background: #eab308 !important;
+            color: #713f12 !important;
+            font-weight: 600 !important;
+        }
+        .swal-confirm-btn:hover { background: #ca8a04 !important; color:#fff !important; }
+
+        .swal-delete-btn {
+            background: #ef4444 !important;
+            color: #fff !important;
+            font-weight: 600 !important;
+        }
+        .swal-delete-btn:hover { background: #dc2626 !important; }
+
+        .swal-toast-popup {
+            font-family: 'Inter', sans-serif !important;
+            font-size: 0.875rem !important;
         }
     </style>
 </head>
@@ -114,13 +178,16 @@
             </svg>
             Dashboard
         </a>
-        <a href="#" class="nav-item mt-1">
+
+        <a href="{{ route('admin.rooms.index') }}"
+           class="nav-item mt-1 {{ request()->routeIs('admin.rooms.*') ? 'active' : '' }}">
             <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
             </svg>
             Kamar
         </a>
+
         <a href="#" class="nav-item mt-1">
             <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -128,6 +195,7 @@
             </svg>
             Booking
         </a>
+
         <a href="#" class="nav-item mt-1">
             <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -153,35 +221,43 @@
                 <p class="text-[0.72rem] truncate" style="color:var(--smut);">{{ Auth::user()->email }}</p>
             </div>
         </div>
-        <form method="POST" action="{{ route('logout') }}">
+
+        {{-- Logout — form tersembunyi, trigger via SweetAlert --}}
+        <form method="POST" action="{{ route('logout') }}" id="logoutForm">
             @csrf
-            <button type="submit" class="nav-item">
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                </svg>
-                Logout
-            </button>
         </form>
+        <button type="button" onclick="confirmLogout()" class="nav-item">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
+            Logout
+        </button>
     </div>
 </aside>
 
-{{-- Overlay mobile --}}
-<div class="fixed inset-0 z-[35] bg-black/40 hidden" id="sidebarOverlay" onclick="closeSidebar()"></div>
+{{-- Overlay (mobile) --}}
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
 {{-- ══ TOPBAR ══ --}}
-<div class="topbar-offset ml-[260px] h-16 bg-white border-b border-slate-200
-            flex items-center justify-between px-7
+<div class="topbar h-16 bg-white border-b border-slate-200
+            flex items-center justify-between px-5 lg:px-7
             sticky top-0 z-30 shadow-sm">
 
     <div class="flex items-center gap-3">
-        {{-- Hamburger --}}
-        <button onclick="toggleSidebar()" id="hamburgerBtn"
-            class="w-9 h-9 rounded-lg border border-slate-200 bg-slate-50
-                   flex items-center justify-center cursor-pointer"
-            aria-label="Toggle menu">
-            <svg class="w-[18px] h-[18px] text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        {{-- Toggle button — berfungsi di SEMUA ukuran layar --}}
+        <button onclick="toggleSidebar()" id="sidebarToggleBtn"
+                class="sidebar-toggle-btn" aria-label="Toggle sidebar">
+            {{-- Icon hamburger (default) / arrow (saat sidebar terbuka di desktop) --}}
+            <svg id="toggleIconBars" class="w-[18px] h-[18px] text-slate-500"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg id="toggleIconClose" class="w-[18px] h-[18px] text-slate-500 hidden"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"/>
             </svg>
         </button>
 
@@ -213,18 +289,124 @@
 </div>
 
 {{-- ══ MAIN ══ --}}
-<main class="content-offset ml-[260px] p-8 min-h-[calc(100vh-4rem)]">
+<main class="main-wrap p-5 lg:p-8 min-h-[calc(100vh-4rem)]">
     @yield('content')
 </main>
 
 <script>
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('sidebarOverlay').classList.toggle('hidden');
+/* ════════════════════════════════════════════════════
+   SIDEBAR TOGGLE — desktop & mobile
+   Desktop  : collapse (width→0, margin→0)
+   Mobile   : off-canvas slide (translateX)
+════════════════════════════════════════════════════ */
+
+const MOBILE_BP = 1024;   // px
+
+// Baca state tersimpan dari localStorage (desktop)
+let desktopOpen = localStorage.getItem('sidebarOpen') !== 'false';
+
+function isDesktop() {
+    return window.innerWidth > MOBILE_BP;
 }
+
+function updateIcons(open) {
+    document.getElementById('toggleIconBars').classList.toggle('hidden', open);
+    document.getElementById('toggleIconClose').classList.toggle('hidden', !open);
+}
+
+function applySidebarState() {
+    const sidebar  = document.getElementById('sidebar');
+    const overlay  = document.getElementById('sidebarOverlay');
+
+    if (isDesktop()) {
+        // Desktop: gunakan class 'collapsed' pada sidebar & body
+        if (desktopOpen) {
+            sidebar.classList.remove('collapsed');
+            document.body.classList.remove('sidebar-collapsed');
+        } else {
+            sidebar.classList.add('collapsed');
+            document.body.classList.add('sidebar-collapsed');
+        }
+        // Pastikan mobile state bersih
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('show');
+        updateIcons(desktopOpen);
+    } else {
+        // Mobile: gunakan class 'mobile-open' & overlay
+        // Tidak ada perubahan otomatis saat resize — biarkan apa adanya
+        const mobileOpen = sidebar.classList.contains('mobile-open');
+        updateIcons(mobileOpen);
+    }
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    if (isDesktop()) {
+        desktopOpen = !desktopOpen;
+        localStorage.setItem('sidebarOpen', desktopOpen);
+        applySidebarState();
+    } else {
+        // Mobile: toggle off-canvas
+        const isOpen = sidebar.classList.toggle('mobile-open');
+        overlay.classList.toggle('show', isOpen);
+        updateIcons(isOpen);
+    }
+}
+
 function closeSidebar() {
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('sidebarOverlay').classList.add('hidden');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('show');
+    updateIcons(false);
+}
+
+// Init on load
+applySidebarState();
+
+// Re-apply on resize (desktop↔mobile transition)
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        // Bersihkan state yang tidak relevan
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (isDesktop()) {
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('show');
+        } else {
+            sidebar.classList.remove('collapsed');
+            document.body.classList.remove('sidebar-collapsed');
+        }
+        applySidebarState();
+    }, 100);
+});
+
+/* ════════════════════════════════════════════════════
+   SWEETALERT — Konfirmasi Logout
+════════════════════════════════════════════════════ */
+function confirmLogout() {
+    Swal.fire({
+        title: 'Keluar dari akun?',
+        text:  'Sesi Anda akan diakhiri dan diarahkan ke halaman login.',
+        icon:  'question',
+        showCancelButton:  true,
+        confirmButtonText: 'Ya, Logout',
+        cancelButtonText:  'Batal',
+        reverseButtons:    true,
+        focusCancel:       true,
+        customClass: {
+            confirmButton: 'swal-confirm-btn',
+        },
+        buttonsStyling: true,
+    }).then(result => {
+        if (result.isConfirmed) {
+            document.getElementById('logoutForm').submit();
+        }
+    });
 }
 </script>
 </body>
