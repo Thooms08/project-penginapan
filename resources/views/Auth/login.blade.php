@@ -4,8 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login — Penginapan</title>
+    <title>Login — {{ optional(\Modules\Profile\Models\ProfileHotel::first())->name ?? 'Penginapan' }}</title>
+    {{-- Favicon dinamis --}}
+    @if(file_exists(public_path('favicon.png')))
+        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ filemtime(public_path('favicon.png')) }}">
+    @else
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23eab308'/><text x='16' y='22' text-anchor='middle' font-size='18' font-family='sans-serif' fill='%23713f12'>H</text></svg>">
+    @endif
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <style>
@@ -160,20 +167,33 @@
 </head>
 <body>
 
+@php
+    $__hotel     = \Modules\Profile\Models\ProfileHotel::first();
+    $__hotelName = $__hotel?->name ?: 'Penginapan';
+    $__hotelLogo = ($__hotel?->logo && file_exists(public_path($__hotel->logo)))
+                     ? asset($__hotel->logo)
+                     : null;
+@endphp
+
     {{-- ── Topbar brand (mobile only) ── --}}
     <div class="mobile-brand"
          style="display:none; position:sticky; top:0; left:0; right:0; z-index:50;
                 align-items:center; gap:0.75rem; padding:1rem 1.25rem;
                 background:#fff; border-bottom:1px solid #e2e8f0;
                 box-shadow:0 1px 4px rgba(0,0,0,0.06);">
-        <div style="width:34px;height:34px;border-radius:9px;background:#eab308;
-                    display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg style="width:18px;height:18px;color:#713f12;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
-        </div>
-        <span style="font-size:1.1rem;font-weight:800;color:#0f172a;">Penginapan</span>
+        @if($__hotelLogo)
+            <img src="{{ $__hotelLogo }}" alt="Logo"
+                 style="width:34px;height:34px;border-radius:9px;object-fit:contain;background:#fefce8;flex-shrink:0;">
+        @else
+            <div style="width:34px;height:34px;border-radius:9px;background:#eab308;
+                        display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg style="width:18px;height:18px;color:#713f12;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+            </div>
+        @endif
+        <span style="font-size:1.1rem;font-weight:800;color:#0f172a;">{{ $__hotelName }}</span>
     </div>
 
     <div class="login-wrapper">
@@ -184,60 +204,47 @@
             <div class="deco-circle" style="width:280px;height:280px;bottom:-80px;left:-80px;"></div>
             <div class="deco-circle" style="width:160px;height:160px;bottom:180px;right:60px;background:rgba(255,255,255,0.06);"></div>
 
-            {{-- Logo --}}
-            <div style="position:relative;z-index:1;">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center"
-                         style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(4px);">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            {{-- Logo + Nama Hotel — tengah vertikal, besar & jelas --}}
+            <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:1.75rem;">
+                {{-- Logo --}}
+                @if($__hotelLogo)
+                    <img src="{{ $__hotelLogo }}" alt="{{ $__hotelName }}"
+                         style="width:140px;height:140px;border-radius:2rem;object-fit:contain;
+                                background:rgba(255,255,255,0.12);
+                                border:2px solid rgba(255,255,255,0.2);
+                                backdrop-filter:blur(4px);
+                                box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+                @else
+                    <div style="width:140px;height:140px;border-radius:2rem;
+                                display:flex;align-items:center;justify-content:center;
+                                background:rgba(255,255,255,0.15);
+                                border:2px solid rgba(255,255,255,0.2);
+                                backdrop-filter:blur(4px);
+                                box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+                        <svg style="width:72px;height:72px;color:rgba(255,255,255,0.9);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                         </svg>
                     </div>
-                    <span class="text-xl font-extrabold text-white tracking-tight">Penginapan</span>
-                </div>
-            </div>
+                @endif
 
-            {{-- Tagline --}}
-            <div style="position:relative;z-index:1;">
-                <h1 class="font-extrabold text-white leading-tight tracking-tight mb-5"
-                    style="font-size:2.4rem;">
-                    Nikmati Kenyamanan<br>
-                    <span style="color:rgba(255,255,255,0.6);">Setiap Menginap</span>
-                </h1>
-                <p class="text-base leading-relaxed mb-8" style="color:rgba(255,255,255,0.6);">
-                    Temukan kamar terbaik, booking mudah, dan pengalaman menginap yang tak terlupakan bersama kami.
-                </p>
-
-                <div class="flex flex-col gap-3">
-                    @foreach([
-                        ['icon' => 'M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z',
-                         'title' => '24 Kamar Tersedia', 'sub' => 'Berbagai tipe kamar pilihan'],
-                        ['icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
-                         'title' => '1.200+ Tamu Puas', 'sub' => 'Rating 4.9/5 dari tamu setia'],
-                        ['icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
-                         'title' => 'Check-in 24 Jam', 'sub' => 'Layanan siap setiap saat'],
-                    ] as $stat)
-                    <div class="stat-pill">
-                        <div class="w-[36px] h-[36px] rounded-[10px] flex items-center justify-center shrink-0"
-                             style="background:rgba(255,255,255,0.12);">
-                            <svg class="w-[18px] h-[18px] text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $stat['icon'] }}"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-white font-bold text-[0.9rem] leading-tight">{{ $stat['title'] }}</p>
-                            <p class="text-[0.76rem] leading-tight mt-0.5" style="color:rgba(255,255,255,0.55);">{{ $stat['sub'] }}</p>
-                        </div>
-                    </div>
-                    @endforeach
+                {{-- Nama Hotel --}}
+                <div>
+                    <h1 style="font-size:2.6rem;font-weight:900;color:#fff;
+                               letter-spacing:-0.02em;line-height:1.1;
+                               text-shadow:0 2px 12px rgba(0,0,0,0.4);">
+                        {{ $__hotelName }}
+                    </h1>
                 </div>
+
+                {{-- Garis dekoratif --}}
+                <div style="width:60px;height:3px;border-radius:2px;background:rgba(234,179,8,0.7);"></div>
             </div>
 
             {{-- Footer kiri --}}
-            <div style="position:relative;z-index:1;">
+            <div style="position:relative;z-index:1;text-align:center;">
                 <p class="text-[0.75rem]" style="color:rgba(255,255,255,0.3);">
-                    &copy; {{ date('Y') }} Penginapan. All rights reserved.
+                    &copy; {{ date('Y') }} {{ $__hotelName }}. All rights reserved.
                 </p>
             </div>
         </div>
@@ -254,20 +261,64 @@
                     <p class="text-[0.9rem] text-slate-500">Gunakan email atau login cepat via Google.</p>
                 </div>
 
-                {{-- Error messages --}}
-                @if ($errors->any())
-                    <div class="mb-5 p-4 bg-red-50 border border-red-200 rounded-xl">
-                        @foreach ($errors->all() as $error)
-                            <p class="text-[0.85rem] text-red-600 mb-0.5 last:mb-0">• {{ $error }}</p>
-                        @endforeach
-                    </div>
+                {{-- SweetAlert per error field --}}
+                @if($errors->any())
+                <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    @if($errors->has('email'))
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Email Tidak Ditemukan',
+                            text: @json($errors->first('email')),
+                            confirmButtonText: 'Coba Lagi',
+                            confirmButtonColor: '#eab308',
+                            customClass: { confirmButton: 'rounded-xl px-6 py-2.5 font-semibold text-yellow-900' },
+                        });
+                    @elseif($errors->has('password'))
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Password Salah',
+                            text: @json($errors->first('password')),
+                            confirmButtonText: 'Coba Lagi',
+                            confirmButtonColor: '#eab308',
+                            customClass: { confirmButton: 'rounded-xl px-6 py-2.5 font-semibold text-yellow-900' },
+                        });
+                    @elseif($errors->has('captcha'))
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Kode Verifikasi Salah',
+                            text: @json($errors->first('captcha')),
+                            confirmButtonText: 'Mengerti',
+                            confirmButtonColor: '#eab308',
+                            customClass: { confirmButton: 'rounded-xl px-6 py-2.5 font-semibold text-yellow-900' },
+                        });
+                    @else
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Login Gagal',
+                            html: '<ul class="text-left text-sm text-slate-600 space-y-1">'
+                                  + @json($errors->all()).map(function(e){ return '<li>• ' + e + '</li>'; }).join('')
+                                  + '</ul>',
+                            confirmButtonText: 'Tutup',
+                            confirmButtonColor: '#eab308',
+                        });
+                    @endif
+                });
+                </script>
                 @endif
 
                 {{-- Session status --}}
                 @if (session('status'))
-                    <div class="mb-5 p-4 bg-green-50 border border-green-200 rounded-xl">
-                        <p class="text-[0.85rem] text-green-700">{{ session('status') }}</p>
-                    </div>
+                <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({
+                        icon: 'success', title: 'Info',
+                        text: @json(session('status')),
+                        timer: 4000, timerProgressBar: true,
+                        showConfirmButton: false, toast: true, position: 'top-end',
+                    });
+                });
+                </script>
                 @endif
 
                 {{-- Form --}}

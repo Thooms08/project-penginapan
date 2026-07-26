@@ -61,6 +61,12 @@ class ProfileHotelController extends Controller
                 $request->file('logo')->getMimeType(),
                 400, 400, true   // crop persegi
             );
+
+            // Generate favicon 32×32 dari logo yang sama
+            $this->generateFavicon(
+                $request->file('logo')->getRealPath(),
+                $request->file('logo')->getMimeType()
+            );
         }
 
         $hotel->update([
@@ -127,14 +133,19 @@ class ProfileHotelController extends Controller
             ->with('success', 'Foto berhasil dihapus.');
     }
 
-    // ── PRIVATE: Simpan/resize gambar dengan GD ────────────
+    // ── PRIVATE: Simpan/resize + compress gambar dengan GD ──
+    /**
+     * Resize, crop (opsional), lalu compress JPEG sampai ukuran ≤ $maxBytes.
+     * Kualitas diturunkan bertahap dari 85 → 10 sampai target tercapai.
+     */
     private function saveImage(
         string $src,
         string $dest,
         string $mime,
         int $maxW,
         int $maxH,
-        bool $crop = false
+        bool $crop = false,
+        int $maxBytes = 204800   // 200 KB default
     ): void {
         $img = match (true) {
             str_contains($mime, 'jpeg'), str_contains($mime, 'jpg') => @imagecreatefromjpeg($src),
@@ -157,23 +168,71 @@ class ProfileHotelController extends Controller
             $srcX  = (int)(($srcW - $size) / 2);
             $srcY  = (int)(($srcH - $size) / 2);
             $thumb = imagecreatetruecolor($maxW, $maxH);
+            // Background putih
+            imagefill($thumb, 0, 0, imagecolorallocate($thumb, 255, 255, 255));
             imagecopyresampled($thumb, $img, 0, 0, $srcX, $srcY, $maxW, $maxH, $size, $size);
         } else {
-            // Resize proporsional
+            // Resize proporsional — tidak perbesar gambar kecil
             $ratio = min($maxW / $srcW, $maxH / $srcH, 1.0);
-            $newW  = (int)($srcW * $ratio);
-            $newH  = (int)($srcH * $ratio);
+            $newW  = max(1, (int)($srcW * $ratio));
+            $newH  = max(1, (int)($srcH * $ratio));
             $thumb = imagecreatetruecolor($newW, $newH);
-
-            // Isi background putih untuk PNG transparan
-            $white = imagecolorallocate($thumb, 255, 255, 255);
-            imagefill($thumb, 0, 0, $white);
-
+            // Background putih untuk PNG transparan
+            imagefill($thumb, 0, 0, imagecolorallocate($thumb, 255, 255, 255));
             imagecopyresampled($thumb, $img, 0, 0, 0, 0, $newW, $newH, $srcW, $srcH);
         }
 
-        imagejpeg($thumb, $dest, 85);
         imagedestroy($img);
+
+        // ── Compress loop: turunkan kualitas sampai ≤ maxBytes ──
+        $quality = 85;
+        do {
+            // Simpan ke buffer memori dulu, ukur hasilnya
+            ob_start();
+            imagejpeg($thumb, null, $quality);
+            $buffer = ob_get_clean();
+
+            if (strlen($buffer) <= $maxBytes || $quality <= 10) {
+                break;
+            }
+
+            $quality -= 5;
+        } while ($quality >= 10);
+
+        // Tulis buffer ke disk
+        file_put_contents($dest, $buffer);
         imagedestroy($thumb);
+    }
+
+    /**
+     * Generate favicon 32×32 PNG dari gambar sumber, simpan ke public/favicon.png
+     */
+    private function generateFavicon(string $src, string $mime): void
+    {
+        $img = match (true) {
+            str_contains($mime, 'jpeg'), str_contains($mime, 'jpg') => @imagecreatefromjpeg($src),
+            str_contains($mime, 'png')  => @imagecreatefrompng($src),
+            str_contains($mime, 'webp') => @imagecreatefromwebp($src),
+            default                     => null,
+        };
+
+        if (!$img) return;
+
+        $srcW = imagesx($img);
+        $srcH = imagesy($img);
+
+        // Crop center square lalu resize ke 32×32
+        $size  = min($srcW, $srcH);
+        $srcX  = (int)(($srcW - $size) / 2);
+        $srcY  = (int)(($srcH - $size) / 2);
+
+        $favicon = imagecreatetruecolor(32, 32);
+        imagefill($favicon, 0, 0, imagecolorallocate($favicon, 255, 255, 255));
+        imagecopyresampled($favicon, $img, 0, 0, $srcX, $srcY, 32, 32, $size, $size);
+
+        imagepng($favicon, public_path('favicon.png'));
+
+        imagedestroy($img);
+        imagedestroy($favicon);
     }
 }

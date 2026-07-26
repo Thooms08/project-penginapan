@@ -63,8 +63,17 @@ class AuthController extends Controller
         // Regenerate captcha baru setelah login gagal
         session(['login_captcha' => $this->generateCaptcha()]);
 
+        // Bedakan: email tidak ditemukan vs password salah
+        $userExists = User::where('email', $request->email)->exists();
+
+        if (!$userExists) {
+            return back()->withErrors([
+                'email' => 'Email tidak terdaftar. Periksa kembali alamat email Anda.',
+            ])->onlyInput('email');
+        }
+
         return back()->withErrors([
-            'email' => 'Email atau password salah.',
+            'password' => 'Password salah. Silakan coba lagi.',
         ])->onlyInput('email');
     }
 

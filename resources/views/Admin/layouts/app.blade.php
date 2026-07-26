@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin') — Penginapan</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    {{-- Favicon dinamis dari logo hotel --}}
+    @php $__faviconExists = file_exists(public_path('favicon.png')); @endphp
+    @if($__faviconExists)
+        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v={{ filemtime(public_path('favicon.png')) }}">
+    @else
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23eab308'/><text x='16' y='22' text-anchor='middle' font-size='18' font-family='sans-serif' fill='%23713f12'>H</text></svg>">
+    @endif
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -161,19 +168,31 @@
             $__adminProfileFoto = asset($__adminProfile->foto);
         }
     }
+    // Load profil hotel untuk branding sidebar
+    $__hotelProfile = \Modules\Profile\Models\ProfileHotel::first();
+    $__hotelName    = $__hotelProfile?->name ?: 'Penginapan';
+    $__hotelLogo    = ($__hotelProfile?->logo && file_exists(public_path($__hotelProfile->logo)))
+                        ? asset($__hotelProfile->logo)
+                        : null;
 @endphp
 <aside class="sidebar fixed top-0 left-0 h-full flex flex-col z-40" id="sidebar">
 
     {{-- Brand --}}
     <div class="sidebar-sep-b flex items-center gap-3 px-5 py-5">
-        <div class="avatar-yellow-lg">
-            <svg class="w-5 h-5" style="color:var(--ytext);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
-        </div>
-        <div>
-            <p class="text-sm font-extrabold text-white leading-tight">Penginapan</p>
+        @if($__hotelLogo)
+            <img src="{{ $__hotelLogo }}" alt="Logo Hotel"
+                 class="w-10 h-10 rounded-[11px] object-contain flex-shrink-0"
+                 style="background:#fff;border:1px solid rgba(255,255,255,0.15);">
+        @else
+            <div class="avatar-yellow-lg">
+                <svg class="w-5 h-5" style="color:var(--ytext);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+            </div>
+        @endif
+        <div class="min-w-0">
+            <p class="text-sm font-extrabold text-white leading-tight truncate">{{ $__hotelName }}</p>
             <p class="text-xs leading-snug" style="color:var(--smut);">Admin Panel</p>
         </div>
     </div>
