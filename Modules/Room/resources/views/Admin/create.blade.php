@@ -7,119 +7,28 @@
 @section('content')
 
 <style>
-    /* ── Form styles ── */
-    .form-card {
-        background: #fff;
-        border-radius: 1.25rem;
-        border: 1px solid #f1f5f9;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-        padding: 1.75rem;
-        margin-bottom: 1.5rem;
-    }
-    .form-label {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 0.45rem;
-    }
-    .form-label span.req { color: #ef4444; margin-left: 2px; }
-    .form-input, .form-select, .form-textarea {
-        width: 100%;
-        padding: 0.72rem 1rem;
-        background: #f8fafc;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 0.75rem;
-        font-size: 0.9rem;
-        color: #1e293b;
-        outline: none;
-        font-family: inherit;
-        transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
+    /* Custom CSS minimalis khusus untuk elemen kompleks */
+    .photo-zone.dragover {
         border-color: #eab308;
-        box-shadow: 0 0 0 3px rgba(234,179,8,0.15);
-        background: #fff;
+        background-color: #fefce8;
     }
-    .form-input.is-error, .form-textarea.is-error { border-color: #ef4444; }
-    .form-hint { font-size: 0.75rem; color: #94a3b8; margin-top: 0.3rem; }
-    .error-msg { font-size: 0.78rem; color: #ef4444; margin-top: 0.35rem; }
-
-    /* ── Facility row ── */
-    .facility-row {
-        background: #f8fafc;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 1rem;
-        padding: 1.1rem 1.25rem;
-        margin-bottom: 0.75rem;
-        position: relative;
+    .photo-preview-grid::-webkit-scrollbar {
+        width: 6px;
     }
-
-    /* ── Photo upload zone ── */
-    .photo-zone {
-        border: 2px dashed #e2e8f0;
-        border-radius: 1rem;
-        padding: 2rem;
-        text-align: center;
-        cursor: pointer;
-        transition: border-color 0.15s, background 0.15s;
+    .photo-preview-grid::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
     }
-    .photo-zone:hover, .photo-zone.dragover {
-        border-color: #eab308;
-        background: #fefce8;
+    .photo-preview-grid::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
     }
-    .photo-preview-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 0.75rem;
-        margin-top: 1rem;
-    }
-    .photo-preview-item {
-        position: relative;
-        aspect-ratio: 1;
-        border-radius: 0.75rem;
-        overflow: hidden;
-        border: 2px solid #e2e8f0;
-    }
-    .photo-preview-item img { width: 100%; height: 100%; object-fit: cover; }
-    .photo-preview-item .remove-btn {
-        position: absolute; top: 4px; right: 4px;
-        width: 22px; height: 22px; border-radius: 50%;
-        background: rgba(15,23,42,0.7); color: #fff;
-        border: none; cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 12px; line-height: 1;
-    }
-    .photo-preview-item.is-cover { border-color: #eab308; }
-    .cover-badge {
-        position: absolute; bottom: 4px; left: 4px;
-        background: #eab308; color: #713f12;
-        font-size: 0.62rem; font-weight: 700;
-        padding: 1px 6px; border-radius: 999px;
-    }
-
-    /* ── Buttons ── */
-    .btn-primary {
-        background: #eab308; color: #713f12;
-        border: none; cursor: pointer;
-        font-weight: 600; font-size: 0.875rem;
-        transition: background 0.15s, color 0.15s;
-    }
-    .btn-primary:hover { background: #ca8a04; color: #fff; }
-
-    .btn-outline {
-        background: #f8fafc; color: #475569;
-        border: 1.5px solid #e2e8f0; cursor: pointer;
-        font-weight: 600; font-size: 0.875rem;
-        transition: border-color 0.15s, background 0.15s;
-    }
-    .btn-outline:hover { border-color: #94a3b8; background: #fff; }
 </style>
 
 {{-- Back link --}}
-<div class="mb-5">
+<div class="mb-6">
     <a href="{{ route('admin.rooms.index') }}"
-       class="inline-flex items-center gap-1.5 text-[0.85rem] text-slate-500 hover:text-slate-800 no-underline transition-colors">
+       class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
         </svg>
@@ -129,9 +38,12 @@
 
 {{-- Validation errors --}}
 @if($errors->any())
-    <div class="bg-red-50 border border-red-200 rounded-xl px-5 py-4 mb-6">
-        <p class="text-[0.85rem] font-semibold text-red-700 mb-1.5">Terdapat kesalahan input:</p>
-        <ul class="list-disc list-inside text-[0.82rem] text-red-600 space-y-0.5">
+    <div class="bg-red-50 border border-red-200 rounded-xl p-5 mb-8 shadow-sm">
+        <h4 class="text-sm font-bold text-red-700 mb-2 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Terdapat kesalahan input:
+        </h4>
+        <ul class="list-disc list-inside text-sm text-red-600 space-y-1">
             @foreach($errors->all() as $err)
                 <li>{{ $err }}</li>
             @endforeach
@@ -140,7 +52,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var errorLines = @json($errors->all());
-            var html = '<div style="text-align:left;font-size:0.85rem;color:#475569;line-height:1.7;">'
+            var html = '<div class="text-left text-sm text-slate-600 leading-relaxed">'
                 + errorLines.map(function(e){ return '&bull; ' + e; }).join('<br>')
                 + '</div>';
             Swal.fire({
@@ -148,236 +60,206 @@
                 title: 'Input Tidak Valid',
                 html: html,
                 confirmButtonText: 'Perbaiki',
-                customClass: { confirmButton: 'swal-confirm-btn' },
+                confirmButtonColor: '#eab308',
+                customClass: { confirmButton: 'rounded-xl px-6 py-2.5 font-semibold' },
             });
         });
     </script>
 @endif
 
-<form method="POST" action="{{ route('admin.rooms.store') }}"
-      enctype="multipart/form-data" id="roomForm">
+<form method="POST" action="{{ route('admin.rooms.store') }}" enctype="multipart/form-data" id="roomForm">
     @csrf
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        {{-- ── Kolom kiri (2/3) ── --}}
-        <div class="lg:col-span-2 flex flex-col gap-6">
+        {{-- ── Kolom Kiri (Lebih lebar di desktop - 8 kolom) ── --}}
+        <div class="lg:col-span-8 flex flex-col gap-8">
 
             {{-- Info Dasar --}}
-            <div class="form-card">
-                <h3 class="text-[0.9rem] font-bold text-slate-900 mb-5 flex items-center gap-2">
-                    <svg class="w-4 h-4" style="color:#eab308;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="text-base font-bold text-slate-800 mb-6 flex items-center gap-2 border-b border-slate-100 pb-4">
+                    <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                     </svg>
                     Informasi Kamar
                 </h3>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- Nama kamar --}}
-                    <div class="sm:col-span-2">
-                        <label class="form-label" for="name">Nama Kamar <span class="req">*</span></label>
-                        <input id="name" name="name" type="text"
-                               value="{{ old('name') }}"
-                               placeholder="cth. Kamar Deluxe"
-                               class="form-input {{ $errors->has('name') ? 'is-error' : '' }}"
-                               maxlength="255" required>
-                        @error('name')<p class="error-msg">{{ $message }}</p>@enderror
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="name">
+                            Nama Kamar <span class="text-red-500">*</span>
+                        </label>
+                        <input id="name" name="name" type="text" value="{{ old('name') }}" placeholder="cth. Kamar Deluxe" required
+                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all {{ $errors->has('name') ? 'border-red-500 focus:ring-red-400' : '' }}" maxlength="255">
+                        @error('name')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
                     </div>
 
                     {{-- Kapasitas --}}
                     <div>
-                        <label class="form-label" for="capacity">Kapasitas <span class="req">*</span></label>
-                        <input id="capacity" name="capacity" type="number"
-                               value="{{ old('capacity', 2) }}"
-                               min="1" max="100" required
-                               class="form-input {{ $errors->has('capacity') ? 'is-error' : '' }}">
-                        <p class="form-hint">Jumlah tamu maksimal</p>
-                        @error('capacity')<p class="error-msg">{{ $message }}</p>@enderror
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="capacity">
+                            Kapasitas Tamu <span class="text-red-500">*</span>
+                        </label>
+                        <input id="capacity" name="capacity" type="number" value="{{ old('capacity', 2) }}" min="1" max="100" required
+                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all {{ $errors->has('capacity') ? 'border-red-500' : '' }}">
+                        <p class="text-xs text-slate-400 mt-1.5">Jumlah maksimal orang per kamar</p>
+                        @error('capacity')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
                     </div>
 
                     {{-- Harga --}}
                     <div>
-                        <label class="form-label" for="price">Harga per Malam (Rp) <span class="req">*</span></label>
-                        <input id="price" name="price" type="number"
-                               value="{{ old('price') }}"
-                               min="0" step="1000" required
-                               placeholder="cth. 350000"
-                               class="form-input {{ $errors->has('price') ? 'is-error' : '' }}">
-                        @error('price')<p class="error-msg">{{ $message }}</p>@enderror
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="price">
+                            Harga per Malam (Rp) <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-2.5 text-slate-400 text-sm font-medium">Rp</span>
+                            <input id="price" name="price" type="number" value="{{ old('price') }}" min="0" step="1000" required placeholder="350000"
+                                   class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all {{ $errors->has('price') ? 'border-red-500' : '' }}">
+                        </div>
+                        @error('price')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
                     </div>
 
                     {{-- Status --}}
-                    <div>
-                        <label class="form-label" for="status">Status <span class="req">*</span></label>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="status">
+                            Status <span class="text-red-500">*</span>
+                        </label>
                         <select id="status" name="status" required
-                                class="form-select {{ $errors->has('status') ? 'is-error' : '' }}">
-                            <option value="available"   {{ old('status','available') === 'available'   ? 'selected' : '' }}>Tersedia</option>
-                            <option value="unavailable" {{ old('status') === 'unavailable' ? 'selected' : '' }}>Tidak Tersedia</option>
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all {{ $errors->has('status') ? 'border-red-500' : '' }}">
+                            <option value="available" {{ old('status','available') === 'available' ? 'selected' : '' }}>Tersedia (Siap disewa)</option>
+                            <option value="unavailable" {{ old('status') === 'unavailable' ? 'selected' : '' }}>Tidak Tersedia (Maintenance/Penuh)</option>
                         </select>
-                        @error('status')<p class="error-msg">{{ $message }}</p>@enderror
+                        @error('status')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
                     </div>
 
                     {{-- Deskripsi --}}
-                    <div class="sm:col-span-2">
-                        <label class="form-label" for="description">
-                            Deskripsi Lengkap
-                            <span class="font-normal text-slate-400 text-[0.78rem]">(maks. 5000 karakter)</span>
-                        </label>
-                        <textarea id="description" name="description"
-                                  rows="6" maxlength="5000"
-                                  placeholder="Tulis informasi lengkap tentang kamar ini..."
-                                  class="form-textarea {{ $errors->has('description') ? 'is-error' : '' }}">{{ old('description') }}</textarea>
-                        <p class="form-hint">
-                            <span id="descCount">0</span>/5000 karakter
-                        </p>
-                        @error('description')<p class="error-msg">{{ $message }}</p>@enderror
+                    <div class="md:col-span-2">
+                        <div class="flex justify-between items-end mb-1.5">
+                            <label class="block text-sm font-semibold text-slate-700" for="description">Deskripsi Lengkap</label>
+                            <span class="text-xs text-slate-400"><span id="descCount">0</span>/5000 karakter</span>
+                        </div>
+                        <textarea id="description" name="description" rows="5" maxlength="5000" placeholder="Tulis informasi keunggulan kamar ini..."
+                                  class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all resize-y {{ $errors->has('description') ? 'border-red-500' : '' }}">{{ old('description') }}</textarea>
+                        @error('description')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
                     </div>
                 </div>
             </div>
 
             {{-- Fasilitas --}}
-            <div class="form-card">
-                <div class="flex items-center justify-between mb-5">
-                    <h3 class="text-[0.9rem] font-bold text-slate-900 flex items-center gap-2">
-                        <svg class="w-4 h-4" style="color:#eab308;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-slate-100 pb-4">
+                    <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
                         Fasilitas Kamar
                     </h3>
-                    <button type="button" onclick="addFacility()"
-                        class="btn-outline flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[0.8rem]">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
+                    <button type="button" onclick="addFacility()" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         Tambah Fasilitas
                     </button>
                 </div>
 
-                <div id="facilityList">
+                <div id="facilityList" class="space-y-4">
                     {{-- Populated by JS or old input --}}
                 </div>
 
-                <p class="text-[0.78rem] text-slate-400 mt-1" id="facilityEmpty">
-                    Belum ada fasilitas. Klik "Tambah Fasilitas" untuk menambah.
-                </p>
+                <div id="facilityEmpty" class="text-center py-8 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl mt-4">
+                    <p class="text-sm text-slate-500">Belum ada fasilitas yang ditambahkan.</p>
+                </div>
             </div>
         </div>
 
-        {{-- ── Kolom kanan (1/3) ── --}}
-        <div class="flex flex-col gap-6">
+        {{-- ── Kolom Kanan (Lebih sempit - 4 kolom) ── --}}
+        <div class="lg:col-span-4 flex flex-col gap-8">
 
             {{-- Upload Foto --}}
-            <div class="form-card">
-                <h3 class="text-[0.9rem] font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <svg class="w-4 h-4" style="color:#eab308;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="text-base font-bold text-slate-800 mb-6 flex items-center gap-2 border-b border-slate-100 pb-4">
+                    <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
                     Foto Kamar
                 </h3>
 
-                <div class="photo-zone" id="photoZone" onclick="document.getElementById('photos').click()">
-                    <svg class="w-8 h-8 mx-auto mb-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                <div class="photo-zone border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center cursor-pointer transition-all hover:border-yellow-400 hover:bg-yellow-50" id="photoZone" onclick="document.getElementById('photos').click()">
+                    <svg class="w-10 h-10 mx-auto mb-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                     </svg>
-                    <p class="text-[0.82rem] font-semibold text-slate-500">Klik atau seret foto ke sini</p>
-                    <p class="text-[0.72rem] text-slate-400 mt-1">JPG, PNG, WEBP · Maks. 4MB/foto</p>
-                    <p class="text-[0.72rem] text-slate-400">Foto pertama akan menjadi cover</p>
+                    <p class="text-sm font-semibold text-slate-700">Klik atau seret foto ke sini</p>
+                    <p class="text-xs text-slate-500 mt-2">Format: JPG, PNG, WEBP (Maks. 4MB)</p>
+                    <p class="text-[0.65rem] text-slate-400 mt-1 uppercase tracking-wide font-semibold">Foto pertama jadi cover</p>
                 </div>
 
-                <input type="file" id="photos" name="photos[]"
-                       multiple accept="image/*"
-                       class="hidden" onchange="handlePhotoChange(event)">
+                <input type="file" id="photos" name="photos[]" multiple accept="image/*" class="hidden" onchange="handlePhotoChange(event)">
 
-                <div class="photo-preview-grid" id="photoPreview"></div>
-                @error('photos.*')<p class="error-msg mt-2">{{ $message }}</p>@enderror
+                <div class="photo-preview-grid grid grid-cols-3 gap-3 mt-5 max-h-48 overflow-y-auto pr-1" id="photoPreview"></div>
+                @error('photos.*')<p class="text-xs text-red-500 mt-3">{{ $message }}</p>@enderror
             </div>
 
             {{-- Diskon --}}
-            <div class="form-card">
-                <h3 class="text-[0.9rem] font-bold text-slate-900 mb-4 flex items-center gap-2">
-                    <svg class="w-4 h-4" style="color:#eab308;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a2 2 0 012-2z"/>
+            <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="text-base font-bold text-slate-800 mb-6 flex items-center gap-2 border-b border-slate-100 pb-4">
+                    <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a2 2 0 012-2z"/>
                     </svg>
                     Pengaturan Diskon
                 </h3>
 
-                {{-- Tipe diskon --}}
-                <div class="mb-3">
-                    <label class="form-label" for="discount_type">Tipe Diskon</label>
-                    <select id="discount_type" name="discount_type"
-                            class="form-select" onchange="toggleDiscountFields()">
-                        <option value="none"       {{ old('discount_type','none') === 'none'       ? 'selected':'' }}>Tidak Ada</option>
-                        <option value="percentage" {{ old('discount_type') === 'percentage'        ? 'selected':'' }}>Persentase (%)</option>
-                        <option value="fixed"      {{ old('discount_type') === 'fixed'             ? 'selected':'' }}>Nominal (Rp)</option>
-                    </select>
-                    <p class="form-hint">Pilih cara perhitungan diskon</p>
-                </div>
-
-                {{-- Detail diskon (hidden jika none) --}}
-                <div id="discountFields" class="{{ old('discount_type','none') === 'none' ? 'hidden' : '' }} flex flex-col gap-3">
+                <div class="space-y-5">
                     <div>
-                        <label class="form-label" for="discount_value">
-                            Nilai Diskon
-                            <span id="discountUnit" class="font-normal text-slate-400 text-[0.78rem]">
-                                {{ old('discount_type') === 'percentage' ? '(%)' : '(Rp)' }}
-                            </span>
-                        </label>
-                        <input id="discount_value" name="discount_value" type="number"
-                               value="{{ old('discount_value', 0) }}"
-                               min="0" step="any"
-                               placeholder="cth. 15"
-                               class="form-input {{ $errors->has('discount_value') ? 'is-error':'' }}">
-                        @error('discount_value')<p class="error-msg">{{ $message }}</p>@enderror
-                    </div>
-                    <div>
-                        <label class="form-label" for="discount_min_nights">
-                            Minimal Malam
-                        </label>
-                        <input id="discount_min_nights" name="discount_min_nights" type="number"
-                               value="{{ old('discount_min_nights', 0) }}"
-                               min="0" step="1"
-                               class="form-input">
-                        <p class="form-hint">
-                            0 = berlaku semua booking.
-                            Isi angka untuk diskon khusus (cth. 3 = min. 3 malam).
-                        </p>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="discount_type">Tipe Diskon</label>
+                        <select id="discount_type" name="discount_type" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-yellow-400 outline-none transition-all" onchange="toggleDiscountFields()">
+                            <option value="none" {{ old('discount_type','none') === 'none' ? 'selected':'' }}>Tidak Ada</option>
+                            <option value="percentage" {{ old('discount_type') === 'percentage' ? 'selected':'' }}>Persentase (%)</option>
+                            <option value="fixed" {{ old('discount_type') === 'fixed' ? 'selected':'' }}>Nominal (Rp)</option>
+                        </select>
                     </div>
 
-                    {{-- Preview perhitungan --}}
-                    <div id="discountPreview"
-                         class="rounded-xl px-4 py-3 text-[0.8rem]"
-                         style="background:#fefce8;border:1px solid #fef9c3;display:none;">
+                    <div id="discountFields" class="{{ old('discount_type','none') === 'none' ? 'hidden' : '' }} space-y-5 border-t border-slate-100 pt-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="discount_value">
+                                Besaran Diskon <span id="discountUnit" class="text-slate-400 font-normal">{{ old('discount_type') === 'percentage' ? '(%)' : '(Rp)' }}</span>
+                            </label>
+                            <input id="discount_value" name="discount_value" type="number" value="{{ old('discount_value', 0) }}" min="0" step="any" placeholder="cth. 15"
+                                   class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-yellow-400 outline-none transition-all {{ $errors->has('discount_value') ? 'border-red-500':'' }}">
+                            @error('discount_value')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="discount_min_nights">Syarat Minimal Malam</label>
+                            <input id="discount_min_nights" name="discount_min_nights" type="number" value="{{ old('discount_min_nights', 0) }}" min="0" step="1"
+                                   class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-yellow-400 outline-none transition-all">
+                            <p class="text-xs text-slate-400 mt-1.5">Isi 0 jika berlaku tanpa syarat min. menginap</p>
+                        </div>
+
+                        {{-- Preview perhitungan disulap pakai Tailwind --}}
+                        <div id="discountPreview" class="hidden bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                            <!-- Injected by JS -->
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Action buttons --}}
-            <div class="form-card">
-                <button type="submit"
-                    class="btn-primary w-full flex items-center justify-center gap-2
-                           px-5 py-3 rounded-xl text-[0.9rem] font-semibold mb-3">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Simpan Kamar
-                </button>
-                <a href="{{ route('admin.rooms.index') }}"
-                   class="btn-outline w-full flex items-center justify-center gap-2
-                          px-5 py-3 rounded-xl text-[0.9rem] no-underline">
-                    Batal
-                </a>
-            </div>
         </div>
+    </div>
+
+    {{-- Action buttons (Sticky di bawah layarnya biar gampang diakses di desktop) --}}
+    <div class="mt-8 pt-6 border-t border-slate-200 flex flex-col-reverse sm:flex-row justify-end gap-3 sticky bottom-0 bg-slate-50/90 backdrop-blur-sm pb-6 z-10">
+        <a href="{{ route('admin.rooms.index') }}" class="inline-flex justify-center items-center px-6 py-3 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors sm:w-auto w-full">
+            Batal
+        </a>
+        <button type="submit" class="inline-flex justify-center items-center gap-2 px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-yellow-950 text-sm font-bold rounded-xl shadow-sm hover:shadow transition-all sm:w-auto w-full">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            Simpan Data Kamar
+        </button>
     </div>
 </form>
 
 <script>
-/* ── Facility management ─────────────────────────── */
+/* ── Facility management (Dirapihin struktur HTML Injeksinya) ── */
 let facilityIndex = 0;
 
 function addFacility(data) {
@@ -387,37 +269,30 @@ function addFacility(data) {
     const d     = data || { name: '', qty: 1, description: '' };
 
     const row = document.createElement('div');
-    row.className = 'facility-row';
+    row.className = 'relative bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 pr-12 transition-all hover:border-slate-300 group';
     row.id = 'frow_' + idx;
     row.innerHTML = `
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pr-8">
-            <div>
-                <label class="form-label text-xs">Nama Fasilitas</label>
-                <input type="text" name="facilities[${idx}][name]"
-                       value="${escHtml(d.name)}"
-                       placeholder="cth. TV, Kasur, AC"
-                       class="form-input" maxlength="100" required>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div class="md:col-span-5">
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">Nama Fasilitas</label>
+                <input type="text" name="facilities[${idx}][name]" value="${escHtml(d.name)}" placeholder="cth. AC / TV" required
+                       class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition-all" maxlength="100">
             </div>
-            <div>
-                <label class="form-label text-xs">Jumlah (qty)</label>
-                <input type="number" name="facilities[${idx}][qty]"
-                       value="${d.qty}" min="1" max="99"
-                       class="form-input" required>
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">Jumlah</label>
+                <input type="number" name="facilities[${idx}][qty]" value="${d.qty}" min="1" max="99" required
+                       class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition-all">
             </div>
-            <div>
-                <label class="form-label text-xs">Deskripsi <span class="font-normal text-slate-400">(maks. 150 karakter)</span></label>
-                <input type="text" name="facilities[${idx}][description]"
-                       value="${escHtml(d.description || '')}"
-                       placeholder="Keterangan singkat..."
-                       class="form-input" maxlength="150">
+            <div class="md:col-span-5">
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">Deskripsi Singkat</label>
+                <input type="text" name="facilities[${idx}][description]" value="${escHtml(d.description || '')}" placeholder="Opsional..." maxlength="150"
+                       class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition-all">
             </div>
         </div>
-        <button type="button" onclick="removeFacility('frow_${idx}')"
-            class="absolute top-3 right-3 w-7 h-7 rounded-lg flex items-center justify-center
-                   bg-red-50 border border-red-200 text-red-500 hover:bg-red-100 transition-colors"
-            title="Hapus fasilitas">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        <button type="button" onclick="removeFacility('frow_${idx}')" title="Hapus fasilitas"
+            class="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 border border-transparent hover:border-red-200 transition-all opacity-100 md:opacity-50 md:group-hover:opacity-100">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
             </svg>
         </button>
     `;
@@ -428,7 +303,7 @@ function addFacility(data) {
 function removeFacility(id) {
     document.getElementById(id).remove();
     if (!document.getElementById('facilityList').children.length) {
-        document.getElementById('facilityEmpty').style.display = '';
+        document.getElementById('facilityEmpty').style.display = 'block';
     }
 }
 
@@ -438,20 +313,12 @@ function escHtml(str) {
     return div.innerHTML;
 }
 
-/* ── Photo upload preview ────────────────────────── */
-/*
- * Pendekatan: simpan File objects di array selectedFiles.
- * Saat submit, inject via hidden input menggunakan DataTransfer.
- * Reset dilakukan SETELAH DataTransfer selesai (synchronous).
- */
+/* ── Photo upload preview ── */
 let selectedFiles = [];
 
 function handlePhotoChange(event) {
-    // Tambahkan file baru ke array, JANGAN reset input dulu
     Array.from(event.target.files).forEach(f => selectedFiles.push(f));
     renderPreviews();
-    // Reset input SETELAH file sudah masuk ke selectedFiles
-    // Gunakan setTimeout agar tidak race condition
     setTimeout(() => { event.target.value = ''; }, 0);
 }
 
@@ -470,16 +337,13 @@ function renderPreviews() {
         const reader = new FileReader();
         reader.onload = function(e) {
             const item = document.createElement('div');
-            item.className = 'photo-preview-item' + (i === 0 ? ' is-cover' : '');
+            item.className = `relative aspect-square rounded-xl overflow-hidden border-2 ${i === 0 ? 'border-yellow-400 shadow-sm' : 'border-slate-200'}`;
             item.dataset.index = i;
             item.innerHTML = `
-                <img src="${e.target.result}" alt="">
-                ${i === 0 ? '<span class="cover-badge">Cover</span>' : ''}
-                <button type="button" class="remove-btn"
-                    onclick="removePhoto(${i})" title="Hapus foto">
-                    <svg style="width:10px;height:10px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
+                <img src="${e.target.result}" alt="Preview" class="w-full h-full object-cover">
+                ${i === 0 ? '<span class="absolute bottom-1.5 left-1.5 bg-yellow-400 text-yellow-900 text-[0.6rem] font-bold px-2 py-0.5 rounded-full">COVER</span>' : ''}
+                <button type="button" onclick="removePhoto(${i})" title="Hapus" class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-slate-900/60 text-white flex items-center justify-center hover:bg-red-500 transition-colors backdrop-blur-sm">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             `;
             grid.appendChild(item);
@@ -495,57 +359,30 @@ zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
 zone.addEventListener('drop', e => {
     e.preventDefault();
     zone.classList.remove('dragover');
-    Array.from(e.dataTransfer.files)
-        .filter(f => f.type.startsWith('image/'))
-        .forEach(f => selectedFiles.push(f));
+    Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')).forEach(f => selectedFiles.push(f));
     renderPreviews();
 });
 
-// Intercept form submit — inject selectedFiles ke FormData
+// Intercept form submit
 document.getElementById('roomForm').addEventListener('submit', function(e) {
-    if (selectedFiles.length === 0) return; // tidak ada foto, biarkan normal
-
+    if (selectedFiles.length === 0) return;
     e.preventDefault();
-
     const form = this;
     const fd   = new FormData(form);
-
-    // Hapus field photos[] yang kosong dari form asli
     fd.delete('photos[]');
+    selectedFiles.forEach(function(file) { fd.append('photos[]', file, file.name); });
 
-    // Tambahkan file dari selectedFiles
-    selectedFiles.forEach(function(file) {
-        fd.append('photos[]', file, file.name);
-    });
-
-    // Submit via fetch
-    fetch(form.action, {
-        method: 'POST',
-        body: fd,
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
+    fetch(form.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(function(resp) {
-        if (resp.redirected) {
-            window.location.href = resp.url;
-        } else if (resp.ok) {
+        if (resp.redirected) { window.location.href = resp.url; } 
+        else if (resp.ok) { return resp.text().then(function() { window.location.href = resp.url || '{{ route("admin.rooms.index") }}'; }); } 
+        else {
             return resp.text().then(function(html) {
-                // Jika response adalah HTML (redirect tidak ter-detect), navigate
-                window.location.href = resp.url || '{{ route("admin.rooms.index") }}';
-            });
-        } else {
-            // Validasi error — reload halaman dengan response HTML
-            return resp.text().then(function(html) {
-                document.open();
-                document.write(html);
-                document.close();
+                document.open(); document.write(html); document.close();
                 window.history.pushState({}, '', form.action);
             });
         }
-    })
-    .catch(function() {
-        // Fallback: submit biasa tanpa foto
-        form.submit();
-    });
+    }).catch(function() { form.submit(); });
 });
 
 // Description character counter
@@ -555,7 +392,7 @@ function updateCount() { descCt.textContent = descTA.value.length; }
 descTA.addEventListener('input', updateCount);
 updateCount();
 
-/* ── Discount toggle ─────────────────────────────── */
+/* ── Discount toggle & Preview (Dirapihkan dengan Utility Classes) ── */
 function toggleDiscountFields() {
     const type    = document.getElementById('discount_type').value;
     const fields  = document.getElementById('discountFields');
@@ -573,50 +410,43 @@ function updateDiscountPreview() {
     const price   = parseFloat(document.getElementById('price').value) || 0;
     const preview = document.getElementById('discountPreview');
 
-    if (type === 'none' || value <= 0 || price <= 0) { preview.style.display = 'none'; return; }
+    if (type === 'none' || value <= 0 || price <= 0) { 
+        preview.classList.add('hidden'); 
+        return; 
+    }
 
     let discounted = price;
     if (type === 'percentage') discounted = price - (price * value / 100);
     else discounted = price - value;
     discounted = Math.max(0, discounted);
 
-    const fmt    = n => 'Rp\u00a0' + Math.round(n).toLocaleString('id-ID');
-    const saving = type === 'percentage'
-        ? 'Hemat ' + value + '%'
-        : 'Hemat ' + fmt(value);
-
-    let minInfo = minN > 0
-        ? `<span style="font-size:0.72rem;color:#94a3b8;margin-top:2px;display:block;">Berlaku min. <strong>${minN}</strong> malam</span>`
+    const fmt    = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+    const saving = type === 'percentage' ? 'Hemat ' + value + '%' : 'Hemat ' + fmt(value);
+    
+    let minInfo = minN > 0 
+        ? `<div class="text-xs text-slate-500 mt-2 pt-2 border-t border-yellow-200/50">Berlaku min. <span class="font-bold text-slate-700">${minN}</span> malam</div>` 
         : '';
 
     preview.innerHTML = `
-        <div style="display:flex;align-items:flex-end;gap:0.5rem;flex-wrap:wrap;">
-            <span style="font-size:0.8rem;color:#94a3b8;text-decoration:line-through;font-weight:500;">
-                ${fmt(price)}
-            </span>
-            <span style="font-size:1.05rem;font-weight:800;color:#16a34a;">
-                ${fmt(discounted)}
-            </span>
-            <span style="font-size:0.65rem;font-weight:700;color:#15803d;
-                         background:#dcfce7;border:1px solid #bbf7d0;
-                         padding:1px 7px;border-radius:999px;line-height:1.8;">
-                ${saving}
-            </span>
+        <div class="flex items-center gap-2 flex-wrap mb-1">
+            <span class="text-sm text-slate-400 line-through font-medium">${fmt(price)}</span>
+            <span class="text-xs font-bold text-green-700 bg-green-100 border border-green-200 px-2 py-0.5 rounded-full">${saving}</span>
         </div>
-        <span style="font-size:0.72rem;color:#64748b;">/malam</span>
+        <div class="flex items-end gap-1">
+            <span class="text-lg font-black text-green-600">${fmt(discounted)}</span>
+            <span class="text-xs text-slate-500 mb-1">/ malam</span>
+        </div>
         ${minInfo}
     `;
-    preview.style.display = 'block';
+    preview.classList.remove('hidden');
 }
 
-// Attach live preview
 ['discount_type','discount_value','discount_min_nights','price'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', updateDiscountPreview);
 });
-toggleDiscountFields(); // init
+toggleDiscountFields(); 
 
-// Restore old facility input on validation error
 @if(old('facilities'))
     @foreach(old('facilities', []) as $fi => $fac)
         addFacility({

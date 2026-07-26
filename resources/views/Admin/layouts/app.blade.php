@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin') — Penginapan</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -150,6 +151,17 @@
 <body class="bg-slate-100 min-h-screen">
 
 {{-- ══ SIDEBAR ══ --}}
+@php
+    /* Load foto profil dari tabel profile_users sekali di sini,
+       dipakai oleh sidebar & topbar */
+    $__adminProfileFoto = null;
+    if (Auth::check()) {
+        $__adminProfile = \Modules\Profile\Models\ProfileUser::where('user_id', Auth::id())->first();
+        if ($__adminProfile && $__adminProfile->foto) {
+            $__adminProfileFoto = asset($__adminProfile->foto);
+        }
+    }
+@endphp
 <aside class="sidebar fixed top-0 left-0 h-full flex flex-col z-40" id="sidebar">
 
     {{-- Brand --}}
@@ -203,12 +215,37 @@
             </svg>
             Tamu
         </a>
+
+        <a href="{{ route('admin.hotel.index') }}"
+           class="nav-item mt-1 {{ request()->routeIs('admin.hotel.*') ? 'active' : '' }}">
+            <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            Profil Hotel
+        </a>
+
+        <div class="mt-4">
+            <p class="nav-label">Akun</p>
+            <a href="{{ route('admin.profile.index') }}"
+               class="nav-item {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
+                <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                Profil Saya
+            </a>
+        </div>
     </nav>
 
     {{-- User + Logout --}}
     <div class="sidebar-sep-t px-3 py-4">
         <div class="flex items-center gap-3 px-1.5 py-2 mb-2 min-w-0">
-            @if(Auth::user()->avatar)
+            @if($__adminProfileFoto)
+                <img src="{{ $__adminProfileFoto }}" alt="avatar"
+                    class="w-[34px] h-[34px] rounded-full object-cover shrink-0"
+                    style="border:2px solid rgba(255,255,255,0.15);">
+            @elseif(Auth::user()->avatar)
                 <img src="{{ Auth::user()->avatar }}" alt="avatar"
                     class="w-[34px] h-[34px] rounded-full object-cover shrink-0">
             @else
@@ -272,19 +309,35 @@
     </div>
 
     <div class="flex items-center gap-3">
-        @if(Auth::user()->avatar)
-            <img src="{{ Auth::user()->avatar }}" alt="avatar"
-                class="w-[34px] h-[34px] rounded-full object-cover"
-                style="border:2px solid var(--y100);">
-        @else
-            <div class="avatar-yellow">
-                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+        {{-- Area avatar + nama — klik untuk ke halaman Profil --}}
+        <a href="{{ route('admin.profile.index') }}"
+           title="Profil Saya"
+           class="flex items-center gap-3 px-2.5 py-1.5 rounded-xl transition-colors
+                  hover:bg-slate-100 {{ request()->routeIs('admin.profile.*') ? 'bg-yellow-50 ring-1 ring-yellow-300' : '' }}">
+            <div id="topbarAvatarWrap">
+                @if($__adminProfileFoto)
+                    <img src="{{ $__adminProfileFoto }}"
+                         alt="avatar"
+                         id="topbarAvatarImg"
+                         class="w-[34px] h-[34px] rounded-full object-cover flex-shrink-0"
+                         style="border:2px solid var(--y100);">
+                @elseif(Auth::user()->avatar)
+                    <img src="{{ Auth::user()->avatar }}"
+                         alt="avatar"
+                         id="topbarAvatarImg"
+                         class="w-[34px] h-[34px] rounded-full object-cover flex-shrink-0"
+                         style="border:2px solid var(--y100);">
+                @else
+                    <div class="avatar-yellow flex-shrink-0" id="topbarAvatarInitials">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                @endif
             </div>
-        @endif
-        <div class="hidden sm:block">
-            <p class="text-[0.82rem] font-semibold text-slate-900">{{ Auth::user()->name }}</p>
-            <p class="text-[0.72rem] text-slate-400">Admin</p>
-        </div>
+            <div class="hidden sm:block leading-tight">
+                <p class="text-[0.82rem] font-semibold text-slate-900">{{ Auth::user()->name }}</p>
+                <p class="text-[0.72rem] text-slate-400">Admin</p>
+            </div>
+        </a>
     </div>
 </div>
 
