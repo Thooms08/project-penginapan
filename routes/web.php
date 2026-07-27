@@ -11,7 +11,7 @@ use App\Http\Controllers\Auth\AuthController;
 
 // Halaman utama redirect ke login
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('index');
 });
 
 // Auth routes (guest only)
