@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\PublicController;
 
 /*
 |--------------------------------------------------------------------------
@@ -9,10 +10,13 @@ use App\Http\Controllers\Auth\AuthController;
 |--------------------------------------------------------------------------
 */
 
-// Halaman utama redirect ke login
+// Halaman utama (public — tidak memerlukan login)
 Route::get('/', function () {
     return redirect()->route('index');
 });
+
+Route::get('/home', [PublicController::class, 'index'])->name('index');
+Route::get('/kamar/{uuid}', [PublicController::class, 'show'])->name('room.show');
 
 // Auth routes (guest only)
 Route::middleware('guest')->group(function () {
@@ -35,9 +39,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     })->name('dashboard');
 });
 
-// Visitor routes
+// Visitor routes — arahkan ke halaman utama publik
 Route::middleware(['auth', 'role:visitor'])->prefix('visitor')->name('visitor.')->group(function () {
     Route::get('/dashboard', function () {
-        return view('Visitors.index');
+        return redirect()->route('index');
     })->name('dashboard');
 });
