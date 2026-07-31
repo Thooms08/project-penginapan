@@ -7,6 +7,7 @@ use Modules\Room\Models\Room;
 use Modules\Profile\Models\ProfileHotel;
 use Modules\Booking\Models\CheckInOutSetting;
 use Modules\Booking\Models\SurchargeSetting;
+use App\Models\Other;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
@@ -165,6 +166,33 @@ class PublicController extends Controller
             'earlyCheckinFees',
             'lateCheckoutFees',
         ));
+    }
+
+    /**
+     * Halaman publik: Tentang Kami.
+     */
+    public function about()
+    {
+        $other = Other::getInstance();
+        return view('about', compact('other'));
+    }
+
+    /**
+     * Halaman publik: Kebijakan & Privasi.
+     */
+    public function privacyPolicy()
+    {
+        $other = Other::getInstance();
+        return view('privacy-policy', compact('other'));
+    }
+
+    /**
+     * Halaman publik: Syarat & Ketentuan.
+     */
+    public function termsConditions()
+    {
+        $other = Other::getInstance();
+        return view('terms-conditions', compact('other'));
     }
 }
 

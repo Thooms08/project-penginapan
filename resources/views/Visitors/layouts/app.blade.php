@@ -136,6 +136,77 @@
         /* ─── SweetAlert theme ─── */
         .swal-confirm-btn { background: #eab308 !important; color: #713f12 !important; font-weight:600!important; }
         .swal-confirm-btn:hover { background: #ca8a04 !important; color:#fff!important; }
+
+        /* ─── Topbar nav button (with chevron) ─── */
+        .pub-topbar-nav-btn {
+            font-size: 0.875rem; font-weight: 500; color: #475569;
+            display: inline-flex; align-items: center; gap: 0.15rem;
+            padding: 0.45rem 0.875rem; border-radius: 0.625rem;
+            background: transparent; border: none; cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .pub-topbar-nav-btn:hover,
+        .pub-topbar-nav-btn.active { background: var(--y50); color: var(--ytext); }
+
+        /* ─── Dropdown menu ─── */
+        .pub-topbar-dropdown { position: relative; }
+        .pub-drop-menu {
+            position: absolute; top: calc(100% + 6px); left: 50%;
+            transform: translateX(-50%);
+            min-width: 200px;
+            background: white; border: 1px solid #e2e8f0;
+            border-radius: 0.875rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+            padding: 0.375rem;
+            z-index: 100;
+            animation: dropFade 0.15s ease;
+        }
+        @keyframes dropFade {
+            from { opacity:0; transform: translateX(-50%) translateY(-6px); }
+            to   { opacity:1; transform: translateX(-50%) translateY(0); }
+        }
+        .pub-drop-item {
+            display: flex; align-items: center; gap: 0.625rem;
+            padding: 0.55rem 0.75rem; border-radius: 0.625rem;
+            font-size: 0.845rem; font-weight: 500; color: #374151;
+            text-decoration: none; transition: background 0.12s, color 0.12s;
+        }
+        .pub-drop-item:hover { background: var(--y50); color: var(--ytext); }
+        .pub-drop-item.active { background: var(--y100); color: var(--ytext); font-weight: 600; }
+
+        /* ─── Info bottom sheet (mobile) ─── */
+        .info-sheet-overlay {
+            display: none; position: fixed; inset: 0; z-index: 70;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(2px);
+        }
+        .info-sheet-overlay.show { display: block; }
+        .info-sheet {
+            position: fixed; left: 0; right: 0; bottom: 0; z-index: 71;
+            background: white; border-radius: 1.25rem 1.25rem 0 0;
+            padding: 0 0 env(safe-area-inset-bottom, 0px);
+            transform: translateY(100%);
+            transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+        }
+        .info-sheet.show { transform: translateY(0); }
+        .info-sheet-handle {
+            width: 36px; height: 4px; border-radius: 2px;
+            background: #e2e8f0; margin: 0.75rem auto 0;
+        }
+        .info-sheet-item {
+            display: flex; align-items: center; gap: 0.875rem;
+            padding: 0.875rem 1.25rem; text-decoration: none;
+            color: #1e293b; font-size: 0.9rem; font-weight: 500;
+            border-bottom: 1px solid #f1f5f9; transition: background 0.12s;
+        }
+        .info-sheet-item:last-child { border-bottom: none; }
+        .info-sheet-item:hover { background: #f8fafc; }
+        .info-sheet-item:active { background: var(--y50); }
+        .info-sheet-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
     </style>
     @stack('head')
 </head>
@@ -171,6 +242,46 @@
         <a href="{{ route('index') }}" class="{{ request()->routeIs('index') ? 'active' : '' }}">Beranda</a>
         <a href="{{ route('index') }}#kamar">Kamar</a>
         <a href="{{ route('index') }}#tentang">Tentang</a>
+
+        {{-- Dropdown: Info Lainnya --}}
+        <div class="pub-topbar-dropdown" id="infoDropdown">
+            <button type="button"
+                    class="pub-topbar-nav-btn {{ request()->routeIs('about') || request()->routeIs('privacy-policy') || request()->routeIs('terms-conditions') ? 'active' : '' }}"
+                    onclick="toggleInfoDropdown()" id="infoDropBtn"
+                    aria-haspopup="true" aria-expanded="false">
+                Info
+                <svg class="w-3 h-3 ml-0.5 transition-transform duration-150" id="infoDropChevron"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <div id="infoDropMenu"
+                 class="pub-drop-menu hidden"
+                 role="menu">
+                <a href="{{ route('about') }}" class="pub-drop-item {{ request()->routeIs('about') ? 'active' : '' }}" role="menuitem">
+                    <svg class="w-4 h-4 shrink-0" style="color:#b45309;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Tentang Kami
+                </a>
+                <a href="{{ route('privacy-policy') }}" class="pub-drop-item {{ request()->routeIs('privacy-policy') ? 'active' : '' }}" role="menuitem">
+                    <svg class="w-4 h-4 shrink-0" style="color:#9d174d;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                    Kebijakan &amp; Privasi
+                </a>
+                <a href="{{ route('terms-conditions') }}" class="pub-drop-item {{ request()->routeIs('terms-conditions') ? 'active' : '' }}" role="menuitem">
+                    <svg class="w-4 h-4 shrink-0" style="color:#5b21b6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Syarat &amp; Ketentuan
+                </a>
+            </div>
+        </div>
+
         @if($__hotel?->wa)
             <a href="https://wa.me/{{ preg_replace('/\D/', '', $__hotel->wa) }}" target="_blank" rel="noopener">Kontak</a>
         @endif
@@ -185,15 +296,24 @@
                 $__pubProfile = \Modules\Profile\Models\ProfileUser::where('user_id', Auth::id())->first();
                 if ($__pubProfile?->foto) $__pubAvatar = asset($__pubProfile->foto);
                 elseif (Auth::user()->avatar) $__pubAvatar = Auth::user()->avatar;
+                $__isVisitor = Auth::user()->role === 'visitor';
             @endphp
             <div class="flex items-center gap-2.5">
-                @if($__pubAvatar)
-                    <img src="{{ $__pubAvatar }}" alt="avatar" class="pub-topbar-avatar">
+                {{-- Avatar: klik ke profil visitor / dashboard admin --}}
+                @if($__isVisitor)
+                    <a href="{{ route('visitor.profile.index') }}" title="Profil Saya"
+                       class="pub-topbar-avatar {{ request()->routeIs('visitor.profile.*') ? 'ring-2 ring-yellow-400' : '' }}">
                 @else
-                    <div class="pub-topbar-avatar">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                    </div>
+                    <a href="{{ route('admin.profile.index') }}" title="Profil Admin"
+                       class="pub-topbar-avatar">
                 @endif
+                    @if($__pubAvatar)
+                        <img src="{{ $__pubAvatar }}" alt="avatar"
+                             style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--y100);">
+                    @else
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    @endif
+                </a>
                 <div class="hidden md:block leading-tight">
                     <p class="text-[0.82rem] font-semibold text-slate-900 leading-none">{{ Auth::user()->name }}</p>
                     <p class="text-[0.7rem] text-slate-400 mt-0.5">{{ ucfirst(Auth::user()->role) }}</p>
@@ -277,9 +397,11 @@
             </a>
         @endauth
 
-        {{-- Tentang --}}
-        <a href="#tentang" class="bbar-item" aria-label="Tentang"
-           onclick="document.getElementById('tentangSection')?.scrollIntoView({behavior:'smooth'}); return false;">
+        {{-- Info (trigger bottom sheet) --}}
+        <button type="button"
+                onclick="openInfoSheet()"
+                class="bbar-item {{ request()->routeIs('about') || request()->routeIs('privacy-policy') || request()->routeIs('terms-conditions') ? 'active' : '' }}"
+                aria-label="Info">
             <div class="bbar-icon-wrap">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -287,34 +409,55 @@
                 </svg>
             </div>
             <span>Info</span>
-        </a>
+        </button>
 
-        {{-- Akun --}}
+        {{-- Akun / Profil --}}
         @auth
-            <button type="button" onclick="pubMobileMenu()" class="bbar-item" aria-label="Akun">
-                <div class="bbar-icon-wrap" id="bbarAccountIcon">
-                    @php
-                        $__mobileAvatar = null;
-                        if (isset($__pubAvatar)) { $__mobileAvatar = $__pubAvatar; }
-                        elseif (Auth::check()) {
-                            $__mp = \Modules\Profile\Models\ProfileUser::where('user_id', Auth::id())->first();
-                            if ($__mp?->foto) $__mobileAvatar = asset($__mp->foto);
-                            elseif (Auth::user()->avatar) $__mobileAvatar = Auth::user()->avatar;
-                        }
-                    @endphp
-                    @if($__mobileAvatar)
-                        <img src="{{ $__mobileAvatar }}" alt="avatar"
-                             style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
-                    @else
-                        <div style="width:28px;height:28px;border-radius:50%;background:var(--y);
-                                    display:flex;align-items:center;justify-content:center;
-                                    font-size:0.75rem;font-weight:700;color:var(--ytext);">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                        </div>
-                    @endif
-                </div>
-                <span>Akun</span>
-            </button>
+            @php
+                $__bbarAvatar = null;
+                $__bbarProfile = \Modules\Profile\Models\ProfileUser::where('user_id', Auth::id())->first();
+                if ($__bbarProfile?->foto) $__bbarAvatar = asset($__bbarProfile->foto);
+                elseif (Auth::user()->avatar) $__bbarAvatar = Auth::user()->avatar;
+                $__bbarIsVisitor = Auth::user()->role === 'visitor';
+            @endphp
+            @if($__bbarIsVisitor)
+                {{-- Visitor: langsung ke halaman profil --}}
+                <a href="{{ route('visitor.profile.index') }}"
+                   class="bbar-item {{ request()->routeIs('visitor.profile.*') ? 'active' : '' }}"
+                   aria-label="Profil Saya">
+                    <div class="bbar-icon-wrap" id="bbarAccountIcon">
+                        @if($__bbarAvatar)
+                            <img src="{{ $__bbarAvatar }}" alt="avatar"
+                                 style="width:28px;height:28px;border-radius:50%;object-fit:cover;
+                                        border:2px solid {{ request()->routeIs('visitor.profile.*') ? '#eab308' : '#e2e8f0' }};">
+                        @else
+                            <div style="width:28px;height:28px;border-radius:50%;background:var(--y);
+                                        display:flex;align-items:center;justify-content:center;
+                                        font-size:0.75rem;font-weight:700;color:var(--ytext);">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                        @endif
+                    </div>
+                    <span>Profil</span>
+                </a>
+            @else
+                {{-- Admin / non-visitor: buka menu akun --}}
+                <button type="button" onclick="pubMobileMenu()" class="bbar-item" aria-label="Akun">
+                    <div class="bbar-icon-wrap" id="bbarAccountIcon">
+                        @if($__bbarAvatar)
+                            <img src="{{ $__bbarAvatar }}" alt="avatar"
+                                 style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
+                        @else
+                            <div style="width:28px;height:28px;border-radius:50%;background:var(--y);
+                                        display:flex;align-items:center;justify-content:center;
+                                        font-size:0.75rem;font-weight:700;color:var(--ytext);">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                        @endif
+                    </div>
+                    <span>Akun</span>
+                </button>
+            @endif
         @else
             <a href="{{ route('login') }}" class="bbar-item" aria-label="Masuk">
                 <div class="bbar-icon-wrap">
@@ -330,6 +473,60 @@
     </div>
 </nav>
 
+{{-- ══ INFO BOTTOM SHEET (Mobile) ══ --}}
+<div class="info-sheet-overlay" id="infoSheetOverlay" onclick="closeInfoSheet()"></div>
+<div class="info-sheet" id="infoSheet" role="dialog" aria-modal="true" aria-label="Informasi">
+    <div class="info-sheet-handle"></div>
+    <div class="px-1 py-3">
+        <p class="text-[0.68rem] font-bold text-slate-400 uppercase tracking-widest px-4 mb-1">Informasi</p>
+        <a href="{{ route('about') }}" class="info-sheet-item" onclick="closeInfoSheet()">
+            <div class="info-sheet-icon" style="background:#fef9c3;">
+                <svg class="w-4 h-4" style="color:#b45309;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-900 text-[0.875rem]">Tentang Kami</p>
+                <p class="text-[0.72rem] text-slate-400 mt-0.5">Profil &amp; sejarah penginapan</p>
+            </div>
+            <svg class="w-4 h-4 text-slate-300 ml-auto shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+        </a>
+        <a href="{{ route('privacy-policy') }}" class="info-sheet-item" onclick="closeInfoSheet()">
+            <div class="info-sheet-icon" style="background:#fce7f3;">
+                <svg class="w-4 h-4" style="color:#9d174d;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-900 text-[0.875rem]">Kebijakan &amp; Privasi</p>
+                <p class="text-[0.72rem] text-slate-400 mt-0.5">Perlindungan data tamu</p>
+            </div>
+            <svg class="w-4 h-4 text-slate-300 ml-auto shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+        </a>
+        <a href="{{ route('terms-conditions') }}" class="info-sheet-item" onclick="closeInfoSheet()">
+            <div class="info-sheet-icon" style="background:#ede9fe;">
+                <svg class="w-4 h-4" style="color:#5b21b6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="font-semibold text-slate-900 text-[0.875rem]">Syarat &amp; Ketentuan</p>
+                <p class="text-[0.72rem] text-slate-400 mt-0.5">Aturan penggunaan layanan</p>
+            </div>
+            <svg class="w-4 h-4 text-slate-300 ml-auto shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+        </a>
+    </div>
+</div>
+
 {{-- Logout form (shared) --}}
 @auth
 <form method="POST" action="{{ route('logout') }}" id="mobileLogoutForm">@csrf</form>
@@ -337,6 +534,69 @@
 
 @stack('scripts')
 <script>
+/* ── Info Dropdown (desktop) ── */
+function toggleInfoDropdown() {
+    const menu    = document.getElementById('infoDropMenu');
+    const chevron = document.getElementById('infoDropChevron');
+    const btn     = document.getElementById('infoDropBtn');
+    const isHidden = menu.classList.toggle('hidden');
+    chevron.style.transform = isHidden ? '' : 'rotate(180deg)';
+    btn.setAttribute('aria-expanded', !isHidden);
+}
+// Close dropdown on outside click
+document.addEventListener('click', function(e) {
+    const dd = document.getElementById('infoDropdown');
+    if (dd && !dd.contains(e.target)) {
+        document.getElementById('infoDropMenu')?.classList.add('hidden');
+        const chevron = document.getElementById('infoDropChevron');
+        if (chevron) chevron.style.transform = '';
+        document.getElementById('infoDropBtn')?.setAttribute('aria-expanded', 'false');
+    }
+});
+
+/* ── Info Bottom Sheet (mobile) ── */
+function openInfoSheet() {
+    document.getElementById('infoSheetOverlay').classList.add('show');
+    setTimeout(() => document.getElementById('infoSheet').classList.add('show'), 10);
+    document.body.style.overflow = 'hidden';
+}
+function closeInfoSheet() {
+    document.getElementById('infoSheet').classList.remove('show');
+    document.getElementById('infoSheetOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+/* ── Info Dropdown (desktop) ── */
+function toggleInfoDropdown() {
+    const menu    = document.getElementById('infoDropMenu');
+    const chevron = document.getElementById('infoDropChevron');
+    const btn     = document.getElementById('infoDropBtn');
+    const isHidden = menu.classList.toggle('hidden');
+    chevron.style.transform = isHidden ? '' : 'rotate(180deg)';
+    btn.setAttribute('aria-expanded', String(!isHidden));
+}
+document.addEventListener('click', function(e) {
+    const dd = document.getElementById('infoDropdown');
+    if (dd && !dd.contains(e.target)) {
+        document.getElementById('infoDropMenu')?.classList.add('hidden');
+        const chevron = document.getElementById('infoDropChevron');
+        if (chevron) chevron.style.transform = '';
+        document.getElementById('infoDropBtn')?.setAttribute('aria-expanded', 'false');
+    }
+});
+
+/* ── Info Bottom Sheet (mobile) ── */
+function openInfoSheet() {
+    document.getElementById('infoSheetOverlay').classList.add('show');
+    setTimeout(() => document.getElementById('infoSheet').classList.add('show'), 10);
+    document.body.style.overflow = 'hidden';
+}
+function closeInfoSheet() {
+    document.getElementById('infoSheet').classList.remove('show');
+    document.getElementById('infoSheetOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+}
+
 function pubConfirmLogout() {
     Swal.fire({
         title: 'Keluar dari akun?', text: 'Sesi Anda akan diakhiri.',

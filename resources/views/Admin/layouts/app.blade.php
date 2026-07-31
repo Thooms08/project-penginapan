@@ -253,6 +253,62 @@
             Profil Hotel
         </a>
 
+        {{-- ── Lainnya (submenu collapsible) ── --}}
+        <div class="mt-4">
+            <p class="nav-label">Lainnya</p>
+            @php
+                $isOtherActive = request()->routeIs('admin.other.*');
+            @endphp
+            {{-- Parent toggle --}}
+            <button type="button" id="otherMenuBtn"
+                    onclick="toggleOtherMenu()"
+                    class="nav-item mt-1 w-full justify-between {{ $isOtherActive ? 'active' : '' }}">
+                <span class="flex items-center gap-3">
+                    <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                    </svg>
+                    Lainnya
+                </span>
+                <svg id="otherMenuChevron"
+                     class="w-3.5 h-3.5 shrink-0 transition-transform duration-200 {{ $isOtherActive ? 'rotate-180' : '' }}"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            {{-- Submenu --}}
+            <div id="otherMenuSub"
+                 class="{{ $isOtherActive ? '' : 'hidden' }} pl-3 mt-1 space-y-0.5">
+                <a href="{{ route('admin.other.about') }}"
+                   class="nav-item {{ request()->routeIs('admin.other.about') ? 'active' : '' }}"
+                   style="font-size:0.82rem; padding-left:1rem;">
+                    <svg class="w-[15px] h-[15px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Tentang
+                </a>
+                <a href="{{ route('admin.other.privacy-policy') }}"
+                   class="nav-item {{ request()->routeIs('admin.other.privacy-policy') ? 'active' : '' }}"
+                   style="font-size:0.82rem; padding-left:1rem;">
+                    <svg class="w-[15px] h-[15px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                    Kebijakan &amp; Privasi
+                </a>
+                <a href="{{ route('admin.other.terms-conditions') }}"
+                   class="nav-item {{ request()->routeIs('admin.other.terms-conditions') ? 'active' : '' }}"
+                   style="font-size:0.82rem; padding-left:1rem;">
+                    <svg class="w-[15px] h-[15px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Syarat &amp; Ketentuan
+                </a>
+            </div>
+        </div>
+
         <div class="mt-4">
             <p class="nav-label">Akun</p>
             <a href="{{ route('admin.profile.index') }}"
@@ -465,6 +521,16 @@ window.addEventListener('resize', () => {
         applySidebarState();
     }, 100);
 });
+
+/* ════════════════════════════════════════════════════
+   OTHER SUBMENU TOGGLE
+════════════════════════════════════════════════════ */
+function toggleOtherMenu() {
+    const sub     = document.getElementById('otherMenuSub');
+    const chevron = document.getElementById('otherMenuChevron');
+    const isHidden = sub.classList.toggle('hidden');
+    chevron.classList.toggle('rotate-180', !isHidden);
+}
 
 /* ════════════════════════════════════════════════════
    SWEETALERT — Konfirmasi Logout
