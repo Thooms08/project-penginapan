@@ -79,11 +79,11 @@
         /* ─── BOTTOM BAR (Mobile only) ─── */
         .pub-bottombar {
             display: none;
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
             height: 68px;
             background: rgba(255,255,255,0.97);
             border-top: 1px solid #e2e8f0;
-            box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+            box-shadow: 0 -1px 0 rgba(15, 23, 42, 0.04);
             padding: 0 0.25rem;
             padding-bottom: env(safe-area-inset-bottom, 0px);
         }

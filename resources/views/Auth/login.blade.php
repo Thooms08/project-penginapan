@@ -255,6 +255,13 @@
 
                 {{-- Header --}}
                 <div class="mb-7">
+                    <a href="{{ route('index') }}"
+                       class="inline-flex items-center gap-2 text-[0.9rem] font-semibold text-slate-600 hover:text-slate-900 mb-4 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        Kembali ke Beranda
+                    </a>
                     <h2 class="text-[1.6rem] font-extrabold text-slate-900 tracking-tight mb-1">
                         Masuk ke Akun
                     </h2>

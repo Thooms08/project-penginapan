@@ -216,7 +216,183 @@ document.addEventListener('DOMContentLoaded',function(){
 {{-- Tabel tamu --}}
 @include('booking::Admin.partials.check-table')
 
-{{-- Hidden delete forms --}}
+{{-- ══════════════════════════════════════════════════
+     SECTION — Biaya Tambahan (Early CI / Late CO)
+══════════════════════════════════════════════════ --}}
+<div class="mt-8">
+    {{-- Section Header --}}
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
+        <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <span class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                      style="background:#fef9c3;">
+                    <svg class="w-4 h-4" style="color:#b45309;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </span>
+                Biaya Tambahan
+            </h2>
+            <p class="text-[0.82rem] text-slate-500 mt-0.5 ml-9">
+                Atur biaya <em>early check-in</em> &amp; <em>late check-out</em>
+            </p>
+        </div>
+        <button type="button" onclick="openSurchargeModal()" class="btn-yellow">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Tambah Biaya Tambahan
+        </button>
+    </div>
+
+    {{-- Cards --}}
+    @if($surcharges->isEmpty())
+        <div class="flex flex-col items-center justify-center py-14 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3" style="background:#fef9c3;">
+                <svg class="w-6 h-6" style="color:#b45309;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <p class="text-[0.875rem] font-semibold text-slate-500">Belum ada aturan biaya tambahan</p>
+            <p class="text-[0.78rem] text-slate-400 mt-1">Klik tombol di atas untuk menambahkan</p>
+        </div>
+    @else
+        {{-- Early Check-In group --}}
+        @php
+            $earlyCI = $surcharges->where('type', 'early_checkin');
+            $lateCO  = $surcharges->where('type', 'late_checkout');
+        @endphp
+
+        @foreach([['early_checkin', 'Early Check-In', '#dcfce7', '#15803d', '#f0fdf4', '#bbf7d0', $earlyCI],
+                  ['late_checkout', 'Late Check-Out',  '#ffe4e6', '#be185d', '#fff1f2', '#fecdd3', $lateCO]] as [$typeKey, $typeLabel, $iconBg, $iconColor, $cardBg, $cardBorder, $items])
+            @if($items->count() > 0)
+            <div class="mb-5">
+                <p class="text-[0.72rem] font-bold text-slate-400 uppercase tracking-widest mb-2.5 flex items-center gap-1.5">
+                    <span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0"
+                          style="background:{{ $iconBg }};">
+                        <span class="w-2 h-2 rounded-full" style="background:{{ $iconColor }};"></span>
+                    </span>
+                    {{ $typeLabel }}
+                </p>
+                <div class="flex flex-col gap-3">
+                    @foreach($items as $sc)
+                    <div class="rounded-2xl border p-4 flex flex-wrap items-start gap-4 transition-all"
+                         style="background:{{ $cardBg }};border-color:{{ $cardBorder }};">
+
+                        {{-- Info utama --}}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap mb-1">
+                                <span class="text-[0.8rem] font-bold text-slate-800">{{ $sc->auto_label }}</span>
+                                @if($sc->is_active)
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                                                 text-[0.65rem] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Aktif
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                                                 text-[0.65rem] font-bold bg-slate-100 text-slate-500 border border-slate-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Nonaktif
+                                    </span>
+                                @endif
+                            </div>
+                            @if($sc->description)
+                                <p class="text-[0.75rem] text-slate-500 mt-0.5">{{ $sc->description }}</p>
+                            @endif
+                            <div class="flex items-center gap-3 mt-2 flex-wrap">
+                                <span class="inline-flex items-center gap-1 text-[0.72rem] font-semibold text-slate-600">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Batas jam: <strong>{{ $sc->formatted_threshold }}</strong>
+                                </span>
+                                <span class="inline-flex items-center gap-1 text-[0.72rem] font-semibold"
+                                      style="color:{{ $iconColor }};">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Biaya: <strong>{{ $sc->formatted_fee }}</strong>
+                                    <span class="text-slate-400 font-normal">({{ $sc->fee_type_label }})</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Action buttons --}}
+                        <div class="flex items-center gap-2 shrink-0">
+                            {{-- Toggle --}}
+                            <form method="POST"
+                                  action="{{ route('admin.surcharge.toggle', $sc->id) }}"
+                                  class="inline">
+                                @csrf @method('PATCH')
+                                <button type="submit"
+                                        title="{{ $sc->is_active ? 'Nonaktifkan' : 'Aktifkan' }}"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl
+                                               text-[0.72rem] font-semibold border cursor-pointer transition-colors
+                                               {{ $sc->is_active
+                                                  ? 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                                                  : 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100' }}">
+                                    @if($sc->is_active)
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Nonaktifkan
+                                    @else
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Aktifkan
+                                    @endif
+                                </button>
+                            </form>
+                            {{-- Edit --}}
+                            <button type="button"
+                                    onclick="openEditSurchargeModal({{ json_encode([
+                                        'id'             => $sc->id,
+                                        'type'           => $sc->type,
+                                        'threshold'      => $sc->formatted_threshold,
+                                        'fee_type'       => $sc->fee_type,
+                                        'fee_amount'     => $sc->fee_amount,
+                                        'label'          => $sc->label,
+                                        'description'    => $sc->description,
+                                    ]) }})"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl
+                                           text-[0.72rem] font-semibold border bg-white border-yellow-200
+                                           text-yellow-700 hover:bg-yellow-50 transition-colors cursor-pointer">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5
+                                           m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Edit
+                            </button>
+                            {{-- Delete --}}
+                            <button type="button"
+                                    onclick="confirmDelSurcharge({{ $sc->id }}, '{{ addslashes($sc->auto_label) }}')"
+                                    class="btn-red-sm">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7
+                                           m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+        @endforeach
+    @endif
+</div>
+
+{{-- Hidden delete forms (check-in/out settings) --}}
 @foreach($allSettings as $s)
 <form id="delForm_{{ $s->id }}" method="POST"
       action="{{ route('admin.check.destroy', $s->id) }}" class="hidden">
@@ -224,9 +400,193 @@ document.addEventListener('DOMContentLoaded',function(){
 </form>
 @endforeach
 
+{{-- Hidden delete forms (surcharge settings) --}}
+@foreach($surcharges as $sc)
+<form id="delSurchargeForm_{{ $sc->id }}" method="POST"
+      action="{{ route('admin.surcharge.destroy', $sc->id) }}" class="hidden">
+    @csrf @method('DELETE')
+</form>
+@endforeach
+
 {{-- ══════════════════════════════════════════════════
-     MODAL UTAMA — Atur Jam Check-In & Out
+     MODAL — Tambah / Edit Biaya Tambahan (Surcharge)
 ══════════════════════════════════════════════════ --}}
+<div id="surchargeModal" class="fixed inset-0 z-40 flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeSurchargeModal()"></div>
+    <div class="modal-box relative bg-white rounded-2xl shadow-2xl w-full max-w-lg z-10">
+
+        {{-- Header --}}
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0"
+             style="background:linear-gradient(135deg,#fefce8,#fef9c3);">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background:#fde68a;">
+                    <svg class="w-4 h-4" style="color:#713f12;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p id="surchargeModalTitle" class="text-[0.9rem] font-bold text-slate-900">Tambah Biaya Tambahan</p>
+                    <p class="text-[0.7rem] text-slate-500">Early Check-In / Late Check-Out</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeSurchargeModal()"
+                    class="w-7 h-7 rounded-lg border border-slate-200 bg-white flex items-center justify-center
+                           text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        {{-- Form body --}}
+        <form id="surchargeForm" method="POST" action="{{ route('admin.surcharge.store') }}">
+            @csrf
+            <span id="surchargeMethodSpoof"></span>{{-- diisi JS saat edit --}}
+
+            <div class="px-5 pt-5 pb-4 space-y-4">
+
+                {{-- Tipe --}}
+                <div>
+                    <label class="block text-[0.78rem] font-bold text-slate-700 mb-1.5">
+                        Tipe Biaya <span class="text-red-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label id="lbl_early" class="surcharge-type-option cursor-pointer">
+                            <input type="radio" name="type" value="early_checkin" class="sr-only"
+                                   onchange="updateTypeLabel()">
+                            <div class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 border-slate-200
+                                        transition-all hover:border-emerald-300 type-opt-box">
+                                <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-emerald-50">
+                                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-[0.78rem] font-bold text-slate-800">Early Check-In</p>
+                                    <p class="text-[0.68rem] text-slate-400">Tamu datang lebih awal</p>
+                                </div>
+                            </div>
+                        </label>
+                        <label id="lbl_late" class="surcharge-type-option cursor-pointer">
+                            <input type="radio" name="type" value="late_checkout" class="sr-only"
+                                   onchange="updateTypeLabel()">
+                            <div class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 border-slate-200
+                                        transition-all hover:border-rose-300 type-opt-box">
+                                <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-rose-50">
+                                    <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-[0.78rem] font-bold text-slate-800">Late Check-Out</p>
+                                    <p class="text-[0.68rem] text-slate-400">Tamu keluar terlambat</p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <p id="thresholdHint" class="text-[0.72rem] text-slate-400 mt-1.5"></p>
+                </div>
+
+                {{-- Jam Batas --}}
+                <div>
+                    <label class="block text-[0.78rem] font-bold text-slate-700 mb-1.5">
+                        Jam Batas <span class="text-red-500">*</span>
+                    </label>
+                    <input type="time" name="threshold_time" id="surchargeTime" required
+                           class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50
+                                  text-[0.875rem] font-semibold text-slate-800
+                                  focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100">
+                    <p id="timeHintText" class="text-[0.7rem] text-slate-400 mt-1"></p>
+                </div>
+
+                {{-- Jenis & Nilai Biaya --}}
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[0.78rem] font-bold text-slate-700 mb-1.5">
+                            Jenis Biaya <span class="text-red-500">*</span>
+                        </label>
+                        <select name="fee_type" id="surchargeFeeType" required
+                                onchange="updateFeeLabel()"
+                                class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50
+                                       text-[0.82rem] font-semibold text-slate-800
+                                       focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100
+                                       cursor-pointer">
+                            <option value="fixed">Nominal (Rp)</option>
+                            <option value="percent">Persen (%)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[0.78rem] font-bold text-slate-700 mb-1.5">
+                            Nilai Biaya <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <span id="feePrefix"
+                                  class="absolute left-3 top-1/2 -translate-y-1/2
+                                         text-[0.75rem] font-bold text-slate-400 pointer-events-none">Rp</span>
+                            <input type="number" name="fee_amount" id="surchargeFeeAmount"
+                                   min="0" max="99999999" required
+                                   class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50
+                                          text-[0.875rem] font-semibold text-slate-800
+                                          focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100">
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Label --}}
+                <div>
+                    <label class="block text-[0.78rem] font-bold text-slate-700 mb-1.5">
+                        Label <span class="text-[0.7rem] font-normal text-slate-400">(opsional — otomatis jika kosong)</span>
+                    </label>
+                    <input type="text" name="label" id="surchargeLabel" maxlength="120"
+                           placeholder="Contoh: Early Check-In (sebelum 10:00)"
+                           class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50
+                                  text-[0.82rem] text-slate-800
+                                  focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100">
+                </div>
+
+                {{-- Keterangan --}}
+                <div>
+                    <label class="block text-[0.78rem] font-bold text-slate-700 mb-1.5">
+                        Keterangan <span class="text-[0.7rem] font-normal text-slate-400">(tampil ke tamu)</span>
+                    </label>
+                    <textarea name="description" id="surchargeDesc" rows="2" maxlength="500"
+                              placeholder="Contoh: Biaya berlaku jika tamu check-in sebelum jam 10:00"
+                              class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50
+                                     text-[0.82rem] text-slate-800 resize-none
+                                     focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100"></textarea>
+                </div>
+
+            </div>
+
+            {{-- Footer --}}
+            <div class="px-5 py-4 border-t border-slate-100 bg-slate-50/80 flex gap-2.5">
+                <button type="button" onclick="closeSurchargeModal()"
+                        class="flex-1 inline-flex justify-center items-center
+                               px-4 py-2.5 bg-white border border-slate-300 text-slate-700
+                               text-[0.8rem] font-semibold rounded-xl hover:bg-slate-50 transition-colors">
+                    Batal
+                </button>
+                <button type="submit"
+                        class="flex-1 btn-yellow justify-center py-2.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <span id="surchargeSubmitLabel">Simpan</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.surcharge-type-option input[type="radio"]:checked + .type-opt-box {
+    border-color: #eab308;
+    background: #fefce8;
+}
+</style>
 <div id="settingModal" class="fixed inset-0 z-40 flex items-center justify-center p-4 hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeSettingModal()"></div>
     <div class="modal-box relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl
@@ -884,6 +1244,134 @@ function confirmDel(id, dateLabel, timeLabel) {
         }
     });
 }
+
+/* ════════════════════════════════════════
+   SURCHARGE MODAL
+════════════════════════════════════════ */
+function openSurchargeModal() {
+    // Reset form ke mode tambah baru
+    var form = document.getElementById('surchargeForm');
+    form.action = '{{ route('admin.surcharge.store') }}';
+    form.reset();
+
+    // Hapus method spoof jika ada dari edit sebelumnya
+    var spoof = document.getElementById('surchargeMethodSpoof');
+    spoof.innerHTML = '';
+
+    document.getElementById('surchargeModalTitle').textContent   = 'Tambah Biaya Tambahan';
+    document.getElementById('surchargeSubmitLabel').textContent  = 'Simpan';
+    document.getElementById('surchargeTime').value               = '10:00';
+    document.getElementById('surchargeFeeType').value            = 'fixed';
+    document.getElementById('surchargeFeeAmount').value          = '';
+    document.getElementById('surchargeLabel').value              = '';
+    document.getElementById('surchargeDesc').value               = '';
+
+    // Default pilih early_checkin
+    var radios = form.querySelectorAll('input[name="type"]');
+    radios.forEach(function(r) { r.checked = r.value === 'early_checkin'; });
+
+    updateTypeLabel();
+    updateFeeLabel();
+
+    document.getElementById('surchargeModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function openEditSurchargeModal(data) {
+    var form = document.getElementById('surchargeForm');
+
+    // Set action ke route update
+    form.action = '/admin/surcharge/' + data.id;
+
+    // Inject _method PUT
+    document.getElementById('surchargeMethodSpoof').innerHTML =
+        '<input type="hidden" name="_method" value="PUT">';
+
+    document.getElementById('surchargeModalTitle').textContent  = 'Edit Biaya Tambahan';
+    document.getElementById('surchargeSubmitLabel').textContent = 'Perbarui';
+
+    // Isi nilai
+    var radios = form.querySelectorAll('input[name="type"]');
+    radios.forEach(function(r) { r.checked = r.value === data.type; });
+
+    document.getElementById('surchargeTime').value         = data.threshold;
+    document.getElementById('surchargeFeeType').value      = data.fee_type;
+    document.getElementById('surchargeFeeAmount').value    = data.fee_amount;
+    document.getElementById('surchargeLabel').value        = data.label || '';
+    document.getElementById('surchargeDesc').value         = data.description || '';
+
+    updateTypeLabel();
+    updateFeeLabel();
+
+    document.getElementById('surchargeModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSurchargeModal() {
+    document.getElementById('surchargeModal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function updateTypeLabel() {
+    var radios = document.querySelectorAll('input[name="type"]');
+    var selected = '';
+    radios.forEach(function(r) { if (r.checked) selected = r.value; });
+
+    var hint    = document.getElementById('thresholdHint');
+    var timeHint = document.getElementById('timeHintText');
+
+    if (selected === 'early_checkin') {
+        hint.textContent     = '';
+        timeHint.textContent = 'Tamu yang check-in SEBELUM jam ini akan dikenakan biaya tambahan.';
+    } else if (selected === 'late_checkout') {
+        hint.textContent     = '';
+        timeHint.textContent = 'Tamu yang check-out SETELAH jam ini akan dikenakan biaya tambahan.';
+    } else {
+        hint.textContent     = '';
+        timeHint.textContent = '';
+    }
+}
+
+function updateFeeLabel() {
+    var feeType = document.getElementById('surchargeFeeType').value;
+    var prefix  = document.getElementById('feePrefix');
+    var input   = document.getElementById('surchargeFeeAmount');
+
+    if (feeType === 'percent') {
+        prefix.textContent = '%';
+        input.max          = '100';
+        input.placeholder  = '0 – 100';
+    } else {
+        prefix.textContent = 'Rp';
+        input.max          = '99999999';
+        input.placeholder  = '';
+    }
+}
+
+function confirmDelSurcharge(id, label) {
+    Swal.fire({
+        title: 'Hapus Biaya Tambahan?',
+        html: '<span style="font-size:.88rem;color:#475569;">Aturan <strong>' + label + '</strong> akan dihapus permanen.</span>',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        reverseButtons: true,
+        focusCancel: true,
+        customClass: { confirmButton: 'swal-delete-btn' },
+        buttonsStyling: true,
+    }).then(function(r) {
+        if (r.isConfirmed) {
+            var f = document.getElementById('delSurchargeForm_' + id);
+            if (f) f.submit();
+        }
+    });
+}
+
+// Tutup surcharge modal dengan ESC juga
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSurchargeModal();
+});
 </script>
 
 @endsection

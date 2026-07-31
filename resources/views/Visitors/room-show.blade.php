@@ -9,10 +9,9 @@
         --y50: #fefce8; --y100: #fef9c3; --ytext: #713f12;
     }
 
-    /* Geser pub-bottombar ke bawah price strip di halaman ini */
+    /* Layout mobile: strip harga/CTA ditempatkan di atas bottom nav */
     @media (max-width: 767px) {
-        .pub-bottombar { bottom: 52px; }
-        .show-wrap { padding-bottom: 1rem; }
+        .show-wrap { padding-bottom: 8rem; }
     }
 
     /* ─── Layout ─── */
@@ -22,12 +21,13 @@
     /* ─── Room Price Strip — fixed di atas pub-bottombar (mobile only) ─── */
     .room-price-strip {
         display: none;
-        position: fixed; bottom: 68px; left: 0; right: 0; z-index: 49;
+        position: fixed; left: 0.75rem; right: 0.75rem; bottom: calc(76px + env(safe-area-inset-bottom, 0px) + 0.5rem); z-index: 65;
         background: white;
-        border-top: 1px solid #e2e8f0;
-        padding: 0.625rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        padding: 0.75rem 0.875rem;
         align-items: center; gap: 0.75rem;
-        box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
     }
     @media (max-width: 767px) { .room-price-strip { display: flex; } }
     .rps-price-wrap { flex: 1; min-width: 0; }
@@ -59,7 +59,8 @@
     @media (max-width: 767px) { .gallery-main { aspect-ratio: 4/3; border-radius: 0.875rem; } }
     .gallery-main img {
         width: 100%; height: 100%; object-fit: cover;
-        transition: opacity 0.4s ease;
+        transition: transform 0.45s ease, opacity 0.45s ease;
+        will-change: transform, opacity;
     }
     .gallery-thumb-wrap {
         display: flex; gap: 0.5rem; margin-top: 0.625rem;
@@ -88,7 +89,9 @@
     .gal-arrow:hover { background: rgba(255,255,255,0.3); }
     .gal-arrow.prev { left: 0.875rem; }
     .gal-arrow.next { right: 0.875rem; }
-    @media (max-width: 480px) { .gal-arrow { display: none; } }
+    @media (max-width: 480px) {
+        .gal-arrow { width: 36px; height: 36px; }
+    }
 
     /* Photo counter */
     .gal-counter {
@@ -181,6 +184,15 @@
     .breadcrumb a:hover { color: var(--ytext); }
     .breadcrumb .sep { color: #cbd5e1; }
     .breadcrumb .current { color: #0f172a; font-weight: 500; }
+
+    /* ─── Surcharge pills ─── */
+    .surcharge-pill {
+        display: flex; align-items: flex-start; gap: 0.75rem;
+        padding: 0.75rem 1rem; border-radius: 0.875rem;
+        margin-bottom: 0.5rem; border: 1px solid;
+    }
+    .surcharge-pill-ci { border-color: #bbf7d0; background: #f0fdf4; }
+    .surcharge-pill-co { border-color: #fecdd3; background: #fff1f2; }
 
     /* ─── Lightbox / Photo Modal ─── */
     .photo-modal-overlay {
@@ -603,6 +615,120 @@
                 @endif
             </div>
 
+            {{-- ── BIAYA TAMBAHAN (Early CI / Late CO) ── --}}
+            @if($earlyCheckinFees->count() > 0 || $lateCheckoutFees->count() > 0)
+            <div class="detail-card">
+                <h3>
+                    <span class="icon-dot" style="background:#f59e0b;"></span>
+                    Biaya Tambahan
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                    {{-- Early Check-In Fees --}}
+                    @if($earlyCheckinFees->count() > 0)
+                    <div>
+                        <p class="text-[0.72rem] font-bold text-slate-400 uppercase tracking-wide mb-2.5
+                                   flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                            </svg>
+                            Early Check-In
+                        </p>
+                        <div class="flex flex-col gap-2">
+                            @foreach($earlyCheckinFees as $fee)
+                            <div class="surcharge-pill surcharge-pill-ci">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                                     style="background:#dcfce7;">
+                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[0.8rem] font-bold text-slate-800 leading-snug">
+                                        {{ $fee->auto_label }}
+                                    </p>
+                                    <p class="text-[0.72rem] text-slate-500 mt-0.5">
+                                        Check-in sebelum
+                                        <strong class="text-emerald-700">{{ $fee->formatted_threshold }}</strong>
+                                        → tambah
+                                        <strong class="text-emerald-700">{{ $fee->formatted_fee }}</strong>
+                                        @if($fee->fee_type === 'percent')
+                                            dari harga/malam
+                                        @endif
+                                    </p>
+                                    @if($fee->description)
+                                        <p class="text-[0.68rem] text-slate-400 mt-0.5 leading-relaxed">
+                                            {{ $fee->description }}
+                                        </p>
+                                    @endif
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- Late Check-Out Fees --}}
+                    @if($lateCheckoutFees->count() > 0)
+                    <div>
+                        <p class="text-[0.72rem] font-bold text-slate-400 uppercase tracking-wide mb-2.5
+                                   flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                            Late Check-Out
+                        </p>
+                        <div class="flex flex-col gap-2">
+                            @foreach($lateCheckoutFees as $fee)
+                            <div class="surcharge-pill surcharge-pill-co">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                                     style="background:#ffe4e6;">
+                                    <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[0.8rem] font-bold text-slate-800 leading-snug">
+                                        {{ $fee->auto_label }}
+                                    </p>
+                                    <p class="text-[0.72rem] text-slate-500 mt-0.5">
+                                        Check-out setelah
+                                        <strong class="text-rose-600">{{ $fee->formatted_threshold }}</strong>
+                                        → tambah
+                                        <strong class="text-rose-600">{{ $fee->formatted_fee }}</strong>
+                                        @if($fee->fee_type === 'percent')
+                                            dari harga/malam
+                                        @endif
+                                    </p>
+                                    @if($fee->description)
+                                        <p class="text-[0.68rem] text-slate-400 mt-0.5 leading-relaxed">
+                                            {{ $fee->description }}
+                                        </p>
+                                    @endif
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                </div>
+
+                <p class="mt-4 text-[0.72rem] text-slate-400 flex items-start gap-1.5 pt-3 border-t border-slate-100">
+                    <svg class="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Biaya tambahan akan dihitung saat proses pemesanan berdasarkan jam kedatangan/kepulangan aktual.
+                </p>
+            </div>
+            @endif
+
             {{-- ── KAMAR LAIN (Rekomendasi) ── --}}
             @if($otherRooms->count() > 0)
                 <div class="detail-card">
@@ -973,12 +1099,19 @@
     let current   = 0;
 
     function goTo(idx) {
-        imgs[current].style.opacity  = '0';
-        thumbs[current]?.classList.remove('active');
-
+        const prev = current;
         current = (idx + total) % total;
 
-        imgs[current].style.opacity  = '1';
+        if (imgs[prev]) {
+            imgs[prev].style.opacity = '0';
+            imgs[prev].style.transform = 'translateX(-16px) scale(0.98)';
+        }
+        thumbs[prev]?.classList.remove('active');
+
+        if (imgs[current]) {
+            imgs[current].style.opacity = '1';
+            imgs[current].style.transform = 'translateX(0) scale(1)';
+        }
         thumbs[current]?.classList.add('active');
         if (counter) counter.textContent = (current + 1) + ' / ' + total;
 
@@ -988,6 +1121,11 @@
 
     window.galSlide = function (dir) { goTo(current + dir); };
     window.galGoTo  = function (idx) { goTo(idx); };
+
+    // Geser otomatis setiap 8 detik secara berulang
+    setInterval(function () {
+        galSlide(1);
+    }, 8000);
 
     // Touch swipe di galeri utama
     const main = document.getElementById('galleryMain');

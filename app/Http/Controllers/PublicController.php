@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Modules\Room\Models\Room;
 use Modules\Profile\Models\ProfileHotel;
 use Modules\Booking\Models\CheckInOutSetting;
+use Modules\Booking\Models\SurchargeSetting;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
@@ -134,6 +135,12 @@ class PublicController extends Controller
                 return $r;
             });
 
+        // ── Biaya tambahan (early check-in / late check-out) ─────────
+        $activeSurcharges    = SurchargeSetting::activeEarlyCheckins()
+            ->merge(SurchargeSetting::activeLateCheckouts());
+        $earlyCheckinFees    = SurchargeSetting::activeEarlyCheckins();
+        $lateCheckoutFees    = SurchargeSetting::activeLateCheckouts();
+
         // ── Info hotel (untuk layout) ─────────────────────────────────
         $hotel = ProfileHotel::first();
 
@@ -155,6 +162,8 @@ class PublicController extends Controller
             'defaultCheckOutTime',
             'otherRooms',
             'hotel',
+            'earlyCheckinFees',
+            'lateCheckoutFees',
         ));
     }
 }
