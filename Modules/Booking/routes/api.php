@@ -1,8 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Booking\Http\Controllers\BookingController;
+use Modules\Booking\Http\Controllers\Api\MidtransController;
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('bookings', BookingController::class)->names('booking');
-});
+/*
+|--------------------------------------------------------------------------
+| Booking Module — API Routes
+|--------------------------------------------------------------------------
+*/
+
+// ── Midtrans webhook — NO auth, NO CSRF (called by Midtrans server) ────────
+Route::post('/midtrans/callback', [MidtransController::class, 'callback'])
+    ->name('midtrans.callback');

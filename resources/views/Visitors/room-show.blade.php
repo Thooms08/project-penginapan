@@ -856,7 +856,7 @@
                 {{-- Tombol pesan / CTA --}}
                 @if($isAvailable)
                     @auth
-                        <a href="{{ route('booking.create', array_filter(['room' => $room->uuid, 'check_in' => $checkIn ?? '', 'check_out' => $checkOut ?? ''])) }}"
+                        <a href="{{ route('booking.create', $room->uuid) }}{{ ($checkIn ?? '') || ($checkOut ?? '') ? '?' . http_build_query(array_filter(['check_in' => $checkIn ?? '', 'check_out' => $checkOut ?? ''])) : '' }}"
                            class="w-full flex items-center justify-center gap-2 px-4 py-3.5
                                   rounded-xl font-bold text-[0.9rem] text-[#713f12] no-underline
                                   transition-all active:scale-95"

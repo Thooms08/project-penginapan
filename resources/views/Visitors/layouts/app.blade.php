@@ -240,7 +240,16 @@
     {{-- Nav Links --}}
     <nav class="pub-topbar-nav">
         <a href="{{ route('index') }}" class="{{ request()->routeIs('index') ? 'active' : '' }}">Beranda</a>
-        <a href="{{ route('index') }}#kamar">Kamar</a>
+        @auth
+            @if(Auth::user()->role === 'visitor')
+                <a href="{{ route('booking.history') }}"
+                   class="{{ request()->routeIs('booking.history') ? 'active' : '' }}">Riwayat</a>
+            @else
+                <a href="{{ route('index') }}#kamar">Kamar</a>
+            @endif
+        @else
+            <a href="{{ route('index') }}#kamar">Kamar</a>
+        @endauth
         <a href="{{ route('index') }}#tentang">Tentang</a>
 
         {{-- Dropdown: Info Lainnya --}}
@@ -361,17 +370,42 @@
             <span>Beranda</span>
         </a>
 
-        {{-- Kamar --}}
-        <a href="{{ route('index') }}#kamar" class="bbar-item" aria-label="Kamar"
-           onclick="document.getElementById('kamarSection')?.scrollIntoView({behavior:'smooth'}); return false;">
-            <div class="bbar-icon-wrap">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                </svg>
-            </div>
-            <span>Kamar</span>
-        </a>
+        {{-- Riwayat (visitor login) / Kamar (guest) --}}
+        @auth
+            @if(Auth::user()->role === 'visitor')
+                <a href="{{ route('booking.history') }}"
+                   class="bbar-item {{ request()->routeIs('booking.history') ? 'active' : '' }}"
+                   aria-label="Riwayat Reservasi">
+                    <div class="bbar-icon-wrap">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </div>
+                    <span>Riwayat</span>
+                </a>
+            @else
+                <a href="{{ route('index') }}#kamar" class="bbar-item" aria-label="Kamar">
+                    <div class="bbar-icon-wrap">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <span>Kamar</span>
+                </a>
+            @endif
+        @else
+            <a href="{{ route('index') }}#kamar" class="bbar-item" aria-label="Kamar">
+                <div class="bbar-icon-wrap">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <span>Kamar</span>
+            </a>
+        @endauth
 
         {{-- Booking / CTA --}}
         @auth

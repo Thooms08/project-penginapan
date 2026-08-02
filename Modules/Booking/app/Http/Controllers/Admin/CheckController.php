@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Modules\Booking\Models\CheckInOutSetting;
 use Modules\Booking\Models\SurchargeSetting;
+use Modules\Booking\Models\Booking;
 use Carbon\Carbon;
 
 class CheckController extends Controller
@@ -70,6 +71,26 @@ class CheckController extends Controller
             ];
         })->values()->toArray();
 
+        // Tamu yang sedang check-in (booking_status = checked_in)
+        $checkedInGuests = Booking::with(['user', 'room'])
+            ->where('booking_status', Booking::STATUS_CHECKED_IN)
+            ->orderBy('check_in_date')
+            ->get();
+
+        // Tamu yang sudah check-out (semua waktu, bukan hanya hari ini)
+        $checkedOutGuests = Booking::with(['user', 'room'])
+            ->where('booking_status', Booking::STATUS_CHECKED_OUT)
+            ->orderByDesc('checked_out_at')
+            ->limit(50)
+            ->get();
+
+        // Tamu yang check-out hari ini (check_out_date = today, status checked_in atau checked_out)
+        $checkingOutToday = Booking::with(['user', 'room'])
+            ->whereDate('check_out_date', Carbon::today())
+            ->whereIn('booking_status', [Booking::STATUS_CHECKED_IN, Booking::STATUS_CHECKED_OUT])
+            ->orderBy('check_out_date')
+            ->get();
+
         return view('booking::Admin.check', compact(
             'todayCheckIns',
             'todayCheckOuts',
@@ -78,8 +99,31 @@ class CheckController extends Controller
             'jsTodayCheckIns',
             'jsTodayCheckOuts',
             'surcharges',
-            'jsSurcharges'
+            'jsSurcharges',
+            'checkedInGuests',
+            'checkedOutGuests',
+            'checkingOutToday'
         ));
+    }
+
+    /**
+     * Mark a booking as checked-out.
+     * POST /admin/check/checkout/{booking}
+     */
+    public function checkOut(Booking $booking)
+    {
+        if ($booking->booking_status !== Booking::STATUS_CHECKED_IN) {
+            return redirect()->route('admin.check.index')
+                ->with('error', 'Tamu ini tidak sedang check-in.');
+        }
+
+        $booking->update([
+            'booking_status' => Booking::STATUS_CHECKED_OUT,
+            'checked_out_at' => now(),
+        ]);
+
+        return redirect()->route('admin.check.index')
+            ->with('success', "Tamu {$booking->user->name} berhasil di-check-out pada " . now()->format('H:i') . '.');
     }
 
     /**

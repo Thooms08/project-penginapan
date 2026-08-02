@@ -150,7 +150,7 @@
             {{-- Tombol Pesan / Login --}}
             @if($isAvailable)
                 @auth
-                    <a href="{{ route('booking.create', array_filter(['room' => $room->uuid, 'check_in' => $checkIn ?? '', 'check_out' => $checkOut ?? ''])) }}"
+                    <a href="{{ route('booking.create', $room->uuid) }}{{ ($checkIn ?? '') || ($checkOut ?? '') ? '?' . http_build_query(array_filter(['check_in' => $checkIn ?? '', 'check_out' => $checkOut ?? ''])) : '' }}"
                        class="card-btn w-full flex items-center justify-center gap-2 px-4 py-2.5
                               rounded-xl font-semibold text-[0.875rem] text-[#713f12]
                               transition-all duration-150 active:scale-95 no-underline"

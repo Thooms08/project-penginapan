@@ -4,5 +4,6 @@
     "Profile": true,
     "Finance": true,
     "Settings": true,
-    "Room": true
+    "Room": true,
+    "DataMaster": true
 }
