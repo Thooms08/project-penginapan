@@ -856,20 +856,19 @@
                 {{-- Tombol pesan / CTA --}}
                 @if($isAvailable)
                     @auth
-                        <button type="button"
-                                class="w-full flex items-center justify-center gap-2 px-4 py-3.5
-                                       rounded-xl font-bold text-[0.9rem] text-[#713f12]
-                                       border-none cursor-pointer transition-all active:scale-95"
-                                style="background:var(--y);"
-                                onmouseover="this.style.background='#ca8a04';this.style.color='#fff';"
-                                onmouseout="this.style.background='#eab308';this.style.color='#713f12';"
-                                onclick="window.location.href='#'">
+                        <a href="{{ route('booking.create', array_filter(['room' => $room->uuid, 'check_in' => $checkIn ?? '', 'check_out' => $checkOut ?? ''])) }}"
+                           class="w-full flex items-center justify-center gap-2 px-4 py-3.5
+                                  rounded-xl font-bold text-[0.9rem] text-[#713f12] no-underline
+                                  transition-all active:scale-95"
+                           style="background:var(--y);"
+                           onmouseover="this.style.background='#ca8a04';this.style.color='#fff';"
+                           onmouseout="this.style.background='#eab308';this.style.color='#713f12';">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                             Pesan Kamar Ini
-                        </button>
+                        </a>
                     @else
                         <a href="{{ route('login') }}"
                            class="w-full flex items-center justify-center gap-2 px-4 py-3.5

@@ -150,20 +150,19 @@
             {{-- Tombol Pesan / Login --}}
             @if($isAvailable)
                 @auth
-                    <button type="button"
-                            onclick="openBookingModal('{{ $room->uuid }}', '{{ addslashes($room->name) }}', '{{ $priceDisplay }}')"
-                            class="card-btn w-full flex items-center justify-center gap-2 px-4 py-2.5
-                                   rounded-xl font-semibold text-[0.875rem] text-[#713f12]
-                                   transition-all duration-150 active:scale-95 border-none cursor-pointer"
-                            style="background:#eab308;"
-                            onmouseover="this.style.background='#ca8a04';this.style.color='#fff';"
-                            onmouseout="this.style.background='#eab308';this.style.color='#713f12';">
+                    <a href="{{ route('booking.create', array_filter(['room' => $room->uuid, 'check_in' => $checkIn ?? '', 'check_out' => $checkOut ?? ''])) }}"
+                       class="card-btn w-full flex items-center justify-center gap-2 px-4 py-2.5
+                              rounded-xl font-semibold text-[0.875rem] text-[#713f12]
+                              transition-all duration-150 active:scale-95 no-underline"
+                       style="background:#eab308;"
+                       onmouseover="this.style.background='#ca8a04';this.style.color='#fff';"
+                       onmouseout="this.style.background='#eab308';this.style.color='#713f12';">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                         Pesan Sekarang
-                    </button>
+                    </a>
                 @else
                     <a href="{{ route('login') }}"
                        class="card-btn w-full flex items-center justify-center gap-2 px-4 py-2.5

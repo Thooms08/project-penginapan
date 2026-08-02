@@ -20,7 +20,7 @@ class BookingController extends Controller
      */
     public function create()
     {
-        return view('booking::create');
+        return view('booking::Visitor.booking');
     }
 
     /**
