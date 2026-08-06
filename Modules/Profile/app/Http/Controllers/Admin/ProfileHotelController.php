@@ -24,13 +24,16 @@ class ProfileHotelController extends Controller
         $hotel = ProfileHotel::with('photos')->firstOrCreate([]);
 
         $request->validate([
-            'name'        => 'nullable|string|max:255',
-            'description' => 'nullable|string|max:5000',
-            'address'     => 'nullable|string|max:500',
-            'wa'          => 'nullable|string|max:20|regex:/^[0-9+\-\s]+$/',
-            'email'       => 'nullable|email|max:255',
-            'maps'        => 'nullable|string|max:1000',
-            'logo'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'name'           => 'nullable|string|max:255',
+            'name_en'        => 'nullable|string|max:255',
+            'description'    => 'nullable|string|max:5000',
+            'description_en' => 'nullable|string|max:5000',
+            'address'        => 'nullable|string|max:500',
+            'address_en'     => 'nullable|string|max:500',
+            'wa'             => 'nullable|string|max:20|regex:/^[0-9+\-\s]+$/',
+            'email'          => 'nullable|email|max:255',
+            'maps'           => 'nullable|string|max:1000',
+            'logo'           => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ], [
             'wa.regex'       => 'Format nomor WhatsApp tidak valid.',
             'email.email'    => 'Format email tidak valid.',
@@ -70,13 +73,16 @@ class ProfileHotelController extends Controller
         }
 
         $hotel->update([
-            'name'        => $request->name,
-            'description' => $request->description,
-            'address'     => $request->address,
-            'wa'          => $request->wa,
-            'email'       => $request->email,
-            'maps'        => $request->maps,
-            'logo'        => $logoPath,
+            'name'           => $request->name,
+            'name_en'        => $request->name_en,
+            'description'    => $request->description,
+            'description_en' => $request->description_en,
+            'address'        => $request->address,
+            'address_en'     => $request->address_en,
+            'wa'             => $request->wa,
+            'email'          => $request->email,
+            'maps'           => $request->maps,
+            'logo'           => $logoPath,
         ]);
 
         // ── Upload foto-foto hotel (multiple) ─────────────

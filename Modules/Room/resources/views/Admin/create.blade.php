@@ -95,6 +95,17 @@
                         @error('name')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
                     </div>
 
+                    {{-- Nama kamar (English) --}}
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="name_en">
+                            Room Name
+                            <span class="ml-1.5 text-[0.7rem] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">EN</span>
+                        </label>
+                        <input id="name_en" name="name_en" type="text" value="{{ old('name_en') }}" placeholder="e.g. Deluxe Room"
+                               class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all {{ $errors->has('name_en') ? 'border-red-500' : '' }}" maxlength="255">
+                        @error('name_en')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
+                    </div>
+
                     {{-- Kapasitas --}}
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="capacity">
@@ -141,6 +152,20 @@
                         <textarea id="description" name="description" rows="5" maxlength="5000" placeholder="Tulis informasi keunggulan kamar ini..."
                                   class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all resize-y {{ $errors->has('description') ? 'border-red-500' : '' }}">{{ old('description') }}</textarea>
                         @error('description')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
+                    </div>
+
+                    {{-- Deskripsi (English) --}}
+                    <div class="md:col-span-2">
+                        <div class="flex justify-between items-end mb-1.5">
+                            <label class="block text-sm font-semibold text-slate-700" for="description_en">
+                                Room Description
+                                <span class="ml-1.5 text-[0.7rem] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">EN</span>
+                            </label>
+                            <span class="text-xs text-slate-400"><span id="descEnCount">0</span>/5000 chars</span>
+                        </div>
+                        <textarea id="description_en" name="description_en" rows="5" maxlength="5000" placeholder="Write the room's strengths and features in English..."
+                                  class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all resize-y {{ $errors->has('description_en') ? 'border-red-500' : '' }}">{{ old('description_en') }}</textarea>
+                        @error('description_en')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
                     </div>
                 </div>
             </div>
@@ -266,7 +291,7 @@ function addFacility(data) {
     const list  = document.getElementById('facilityList');
     const empty = document.getElementById('facilityEmpty');
     const idx   = facilityIndex++;
-    const d     = data || { name: '', qty: 1, description: '' };
+    const d     = data || { name: '', name_en: '', qty: 1, description: '', description_en: '' };
 
     const row = document.createElement('div');
     row.className = 'relative bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 pr-12 transition-all hover:border-slate-300 group';
@@ -278,15 +303,29 @@ function addFacility(data) {
                 <input type="text" name="facilities[${idx}][name]" value="${escHtml(d.name)}" placeholder="cth. AC / TV" required
                        class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition-all" maxlength="100">
             </div>
+            <div class="md:col-span-5">
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+                    Facility Name <span class="ml-1 text-[0.65rem] font-bold px-1 py-0.5 rounded bg-blue-50 text-blue-600">EN</span>
+                </label>
+                <input type="text" name="facilities[${idx}][name_en]" value="${escHtml(d.name_en || '')}" placeholder="e.g. AC / TV"
+                       class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-300 outline-none transition-all" maxlength="100">
+            </div>
             <div class="md:col-span-2">
                 <label class="block text-xs font-semibold text-slate-600 mb-1.5">Jumlah</label>
                 <input type="number" name="facilities[${idx}][qty]" value="${d.qty}" min="1" max="99" required
                        class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition-all">
             </div>
-            <div class="md:col-span-5">
+            <div class="md:col-span-6">
                 <label class="block text-xs font-semibold text-slate-600 mb-1.5">Deskripsi Singkat</label>
                 <input type="text" name="facilities[${idx}][description]" value="${escHtml(d.description || '')}" placeholder="Opsional..." maxlength="150"
                        class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-yellow-400 outline-none transition-all">
+            </div>
+            <div class="md:col-span-6">
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+                    Short Description <span class="ml-1 text-[0.65rem] font-bold px-1 py-0.5 rounded bg-blue-50 text-blue-600">EN</span>
+                </label>
+                <input type="text" name="facilities[${idx}][description_en]" value="${escHtml(d.description_en || '')}" placeholder="Optional..." maxlength="150"
+                       class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-300 outline-none transition-all">
             </div>
         </div>
         <button type="button" onclick="removeFacility('frow_${idx}')" title="Hapus fasilitas"
@@ -392,6 +431,14 @@ function updateCount() { descCt.textContent = descTA.value.length; }
 descTA.addEventListener('input', updateCount);
 updateCount();
 
+const descEnTA = document.getElementById('description_en');
+const descEnCt = document.getElementById('descEnCount');
+if (descEnTA && descEnCt) {
+    function updateEnCount() { descEnCt.textContent = descEnTA.value.length; }
+    descEnTA.addEventListener('input', updateEnCount);
+    updateEnCount();
+}
+
 /* ── Discount toggle & Preview (Dirapihkan dengan Utility Classes) ── */
 function toggleDiscountFields() {
     const type    = document.getElementById('discount_type').value;
@@ -450,9 +497,11 @@ toggleDiscountFields();
 @if(old('facilities'))
     @foreach(old('facilities', []) as $fi => $fac)
         addFacility({
-            name:        @json($fac['name'] ?? ''),
-            qty:         @json($fac['qty'] ?? 1),
-            description: @json($fac['description'] ?? ''),
+            name:           @json($fac['name'] ?? ''),
+            name_en:        @json($fac['name_en'] ?? ''),
+            qty:            @json($fac['qty'] ?? 1),
+            description:    @json($fac['description'] ?? ''),
+            description_en: @json($fac['description_en'] ?? ''),
         });
     @endforeach
 @endif

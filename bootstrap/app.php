@@ -12,11 +12,14 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         // Percayai semua proxy (termasuk ngrok, Cloudflare Tunnel, dll.)
-        // Ini aman untuk development; di production ganti '*' dengan IP proxy spesifik.
         $middleware->trustProxies(at: '*');
 
+        // Tambahkan SetLocale ke web group — dijalankan SETELAH StartSession
+        $middleware->appendToGroup('web', \App\Http\Middleware\SetLocale::class);
+
         $middleware->alias([
-            'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'role'       => \App\Http\Middleware\RoleMiddleware::class,
+            'setlocale'  => \App\Http\Middleware\SetLocale::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

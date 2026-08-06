@@ -1,6 +1,6 @@
 @extends('Visitors.layouts.app')
 
-@section('title', $room->name)
+@section('title', $room->trans('name'))
 
 @push('head')
 <style>
@@ -284,9 +284,9 @@
 
     {{-- ── Breadcrumb ── --}}
     <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href="{{ route('index') }}">Beranda</a>
+        <a href="{{ route('index') }}">{{ __('visitor.breadcrumb_home') }}</a>
         <span class="sep">›</span>
-        <a href="{{ route('index') }}#kamar">Kamar</a>
+        <a href="{{ route('index') }}#kamar">{{ __('visitor.breadcrumb_rooms') }}</a>
         <span class="sep">›</span>
         <span class="current">{{ $room->name }}</span>
     </nav>
@@ -334,7 +334,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                 d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                         </svg>
-                        <span class="text-[0.78rem] font-semibold" style="color:rgba(0,0,0,0.3);">Belum ada foto kamar</span>
+                        <span class="text-[0.78rem] font-semibold" style="color:rgba(0,0,0,0.3);">{{ __('visitor.no_photo') }}</span>
                     </div>
                 @endif
             </div>
@@ -363,14 +363,14 @@
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[0.75rem] font-bold
                                      {{ $isAvailable ? 'status-badge-av' : 'status-badge-unav' }}">
                             <span class="w-1.5 h-1.5 rounded-full {{ $isAvailable ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
-                            {{ $isAvailable ? 'Tersedia' : 'Tidak Tersedia' }}
+                            {{ $isAvailable ? __('visitor.room_status_available') : __('visitor.room_status_unavail') }}
                         </span>
                         <span class="text-[0.8rem] text-slate-500 flex items-center gap-1">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
-                            Kapasitas {{ $room->capacity }} orang
+                            {{ __('visitor.capacity_label') }} {{ $room->capacity }} {{ __('visitor.persons') }}
                         </span>
                     </div>
                 </div>
@@ -382,14 +382,14 @@
                     @else
                         <p class="text-xl font-extrabold" style="color:var(--y);">{{ $priceDisplay }}</p>
                     @endif
-                    <p class="text-[0.72rem] text-slate-400">/malam</p>
+                    <p class="text-[0.72rem] text-slate-400">{{ __('visitor.per_night') }}</p>
                 </div>
             </div>
 
             {{-- ── DESKRIPSI ── --}}
             @if($room->description)
                 <div class="detail-card mt-5">
-                    <h3><span class="icon-dot"></span> Deskripsi Kamar</h3>
+                    <h3><span class="icon-dot"></span> {{ __('visitor.room_description') }}</h3>
                     <p class="text-[0.875rem] text-slate-600 leading-relaxed whitespace-pre-line">{{ $room->description }}</p>
                 </div>
             @endif
@@ -398,7 +398,7 @@
             @if($room->facilities->count() > 0)
                 <div class="detail-card">
                     <h3>
-                        <span class="icon-dot"></span> Fasilitas
+                        <span class="icon-dot"></span> {{ __('visitor.facilities') }}
                         <span class="ml-auto text-[0.72rem] font-semibold px-2 py-0.5 rounded-full"
                               style="background:var(--y100);color:var(--ytext);">
                             {{ $room->facilities->count() }} item
@@ -410,7 +410,7 @@
                                 <svg class="w-3.5 h-3.5 shrink-0" style="color:var(--y);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                <span>{{ $facility->name }}</span>
+                                <span>{{ $facility->getTransName() }}</span>
                                 @if($facility->qty > 1)
                                     <span class="qty-badge">×{{ $facility->qty }}</span>
                                 @endif
@@ -418,15 +418,15 @@
                         @endforeach
                     </div>
                     {{-- Deskripsi fasilitas jika ada --}}
-                    @php $facilitiesWithDesc = $room->facilities->filter(fn($f) => $f->description); @endphp
+                    @php $facilitiesWithDesc = $room->facilities->filter(fn($f) => $f->getTransDescription()); @endphp
                     @if($facilitiesWithDesc->count() > 0)
                         <div class="mt-4 pt-4 border-t border-slate-100">
-                            <p class="text-[0.75rem] font-semibold text-slate-500 uppercase tracking-wide mb-2.5">Detail Fasilitas</p>
+                            <p class="text-[0.75rem] font-semibold text-slate-500 uppercase tracking-wide mb-2.5">{{ __('visitor.facility_detail') }}</p>
                             <div class="flex flex-col gap-1.5">
                                 @foreach($facilitiesWithDesc as $facility)
                                     <div class="flex items-start gap-2 text-[0.8rem] text-slate-600">
-                                        <span class="font-semibold text-slate-800 shrink-0">{{ $facility->name }}:</span>
-                                        <span>{{ $facility->description }}</span>
+                                        <span class="font-semibold text-slate-800 shrink-0">{{ $facility->getTransName() }}:</span>
+                                        <span>{{ $facility->getTransDescription() }}</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -452,7 +452,7 @@
                 $filteredCheckOut = $checkOutSettings->filter(fn($s) => $s->date->toDateString() === $selectedScheduleDate)->values();
             @endphp
             <div class="detail-card">
-                <h3><span class="icon-dot"></span> Jadwal Check-In & Check-Out</h3>
+                <h3><span class="icon-dot"></span> {{ __('visitor.checkin_schedule') }}</h3>
 
                 {{-- ── Filter Tanggal ── --}}
                 @if($allDates->count() > 0)
@@ -461,7 +461,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <label for="scheduleFilter">Pilih Tanggal:</label>
+                        <label for="scheduleFilter">{{ __('visitor.select_date') }}</label>
                         <select id="scheduleFilter"
                                 onchange="filterSchedule(this.value)"
                                 style="flex:1;padding:0.35rem 0.625rem;border-radius:0.5rem;border:1px solid #fef9c3;background:white;font-size:0.78rem;color:#374151;outline:none;min-width:0;cursor:pointer;">
@@ -514,7 +514,7 @@
                         @elseif($checkInSettings->count() > 0)
                             {{-- Ada data tapi bukan di tanggal ini --}}
                             <div class="schedule-no-data" id="noCheckInData">
-                                Tidak ada jadwal check-in untuk tanggal ini
+                                {{ __('visitor.no_checkin_date') }}
                             </div>
                         @else
                             {{-- Fallback default --}}
@@ -528,7 +528,7 @@
                                 </div>
                                 <div>
                                     <p class="time-val">{{ $defaultCheckInTime }}</p>
-                                    <p class="time-date">Waktu standar check-in</p>
+                                    <p class="time-date">{{ __('visitor.default_checkin') }}</p>
                                 </div>
                             </div>
                         @endif
@@ -569,7 +569,7 @@
                             @endforeach
                         @elseif($checkOutSettings->count() > 0)
                             <div class="schedule-no-data" id="noCheckOutData">
-                                Tidak ada jadwal check-out untuk tanggal ini
+                                {{ __('visitor.no_checkout_date') }}
                             </div>
                         @else
                             <div class="time-pill time-pill-co">
@@ -582,7 +582,7 @@
                                 </div>
                                 <div>
                                     <p class="time-val">{{ $defaultCheckOutTime }}</p>
-                                    <p class="time-date">Waktu standar check-out</p>
+                                    <p class="time-date">{{ __('visitor.default_checkout') }}</p>
                                 </div>
                             </div>
                         @endif
@@ -618,9 +618,9 @@
             {{-- ── BIAYA TAMBAHAN (Early CI / Late CO) ── --}}
             @if($earlyCheckinFees->count() > 0 || $lateCheckoutFees->count() > 0)
             <div class="detail-card">
-                <h3>
+                    <h3>
                     <span class="icon-dot" style="background:#f59e0b;"></span>
-                    Biaya Tambahan
+                    {{ __('visitor.extra_charge') }}
                 </h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -651,12 +651,12 @@
                                         {{ $fee->auto_label }}
                                     </p>
                                     <p class="text-[0.72rem] text-slate-500 mt-0.5">
-                                        Check-in sebelum
+                                        {{ __('visitor.checkin_before') }}
                                         <strong class="text-emerald-700">{{ $fee->formatted_threshold }}</strong>
-                                        → tambah
+                                        {{ __('visitor.add_fee') }}
                                         <strong class="text-emerald-700">{{ $fee->formatted_fee }}</strong>
                                         @if($fee->fee_type === 'percent')
-                                            dari harga/malam
+                                            {{ __('visitor.from_price_night') }}
                                         @endif
                                     </p>
                                     @if($fee->description)
@@ -697,12 +697,12 @@
                                         {{ $fee->auto_label }}
                                     </p>
                                     <p class="text-[0.72rem] text-slate-500 mt-0.5">
-                                        Check-out setelah
+                                        {{ __('visitor.checkout_after') }}
                                         <strong class="text-rose-600">{{ $fee->formatted_threshold }}</strong>
-                                        → tambah
+                                        {{ __('visitor.add_fee') }}
                                         <strong class="text-rose-600">{{ $fee->formatted_fee }}</strong>
                                         @if($fee->fee_type === 'percent')
-                                            dari harga/malam
+                                            {{ __('visitor.from_price_night') }}
                                         @endif
                                     </p>
                                     @if($fee->description)
@@ -724,7 +724,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    Biaya tambahan akan dihitung saat proses pemesanan berdasarkan jam kedatangan/kepulangan aktual.
+                    {{ __('visitor.extra_charge_note') }}
                 </p>
             </div>
             @endif
@@ -732,7 +732,7 @@
             {{-- ── KAMAR LAIN (Rekomendasi) ── --}}
             @if($otherRooms->count() > 0)
                 <div class="detail-card">
-                    <h3><span class="icon-dot"></span> Kamar Lainnya</h3>
+                    <h3><span class="icon-dot"></span> {{ __('visitor.other_rooms') }}</h3>
                     <div class="flex flex-col gap-2.5">
                         @foreach($otherRooms as $other)
                             <a href="{{ route('room.show', $other->uuid) }}@if($checkIn || $checkOut)?{{ http_build_query(array_filter(['check_in'=>$checkIn,'check_out'=>$checkOut])) }}@endif"
@@ -753,10 +753,10 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-bold text-slate-900 text-[0.875rem] truncate">{{ $other->name }}</p>
-                                    <p class="text-[0.75rem] text-slate-500 mt-0.5">{{ $other->capacity }} orang</p>
+                                    <p class="text-[0.75rem] text-slate-500 mt-0.5">{{ $other->capacity }} {{ __('visitor.persons') }}</p>
                                     <p class="text-[0.875rem] font-extrabold mt-1" style="color:var(--y);">
                                         {{ $other->_priceDisplay }}
-                                        <span class="text-[0.7rem] font-normal text-slate-400">/malam</span>
+                                        <span class="text-[0.7rem] font-normal text-slate-400">{{ __('visitor.per_night') }}</span>
                                     </p>
                                 </div>
                                 <div class="flex items-center shrink-0">
@@ -786,16 +786,16 @@
                             <p class="text-[1.75rem] font-extrabold text-emerald-600 leading-none">
                                 {{ $priceDisplay }}
                             </p>
-                            <span class="text-[0.8rem] text-slate-400">/malam</span>
+                            <span class="text-[0.8rem] text-slate-400">{{ __('visitor.per_night') }}</span>
                         </div>
                         <div class="flex items-center gap-1.5 mt-2 flex-wrap">
                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
                                          text-[0.68rem] font-bold bg-red-500 text-white">
-                                HEMAT {{ $room->formatted_discount }}
+                                {{ __('visitor.save_badge') }} {{ $room->formatted_discount }}
                             </span>
                             @if($room->discount_min_nights > 0)
                                 <span class="text-[0.7rem] text-slate-400">
-                                    Min. {{ $room->discount_min_nights }} malam
+                                    {{ __('visitor.min_nights', ['n' => $room->discount_min_nights]) }}
                                 </span>
                             @endif
                         </div>
@@ -804,7 +804,7 @@
                             <p class="text-[1.75rem] font-extrabold leading-none" style="color:var(--y);">
                                 {{ $priceDisplay }}
                             </p>
-                            <span class="text-[0.8rem] text-slate-400">/malam</span>
+                            <span class="text-[0.8rem] text-slate-400">{{ __('visitor.per_night') }}</span>
                         </div>
                     @endif
                 </div>
@@ -827,14 +827,14 @@
                             </div>
                         </div>
                         <div class="border-t border-slate-200 pt-2 flex items-center justify-between text-[0.8rem]">
-                            <span class="text-slate-500">{{ $nights }} malam × {{ $priceDisplay }}</span>
+                            <span class="text-slate-500">{{ __('visitor.nights_count', ['n' => $nights]) }} × {{ $priceDisplay }}</span>
                             <span class="font-bold text-slate-900">
                                 Rp {{ number_format($discountedPrice * $nights, 0, ',', '.') }}
                             </span>
                         </div>
                         @if($totalSaving > 0)
                             <div class="flex items-center justify-between text-[0.78rem] mt-1">
-                                <span class="text-emerald-600">Hemat total</span>
+                                <span class="text-emerald-600">{{ __('visitor.save_total') }}</span>
                                 <span class="font-bold text-emerald-600">
                                     – Rp {{ number_format($totalSaving, 0, ',', '.') }}
                                 </span>
@@ -849,7 +849,7 @@
                     <div class="w-2 h-2 rounded-full {{ $isAvailable ? 'bg-emerald-500' : 'bg-red-500' }} shrink-0
                                 {{ $isAvailable ? 'animate-pulse' : '' }}"></div>
                     <p class="text-[0.8rem] font-semibold {{ $isAvailable ? 'text-emerald-700' : 'text-red-700' }}">
-                        {{ $isAvailable ? 'Kamar tersedia untuk dipesan' : 'Kamar sedang tidak tersedia' }}
+                        {{ $isAvailable ? __('visitor.room_available_msg') : __('visitor.room_unavailable_msg') }}
                     </p>
                 </div>
 
@@ -867,7 +867,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            Pesan Kamar Ini
+                            {{ __('visitor.book_now') }}
                         </a>
                     @else
                         <a href="{{ route('login') }}"
@@ -881,7 +881,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                             </svg>
-                            Masuk untuk Memesan
+                            {{ __('visitor.login_to_book') }}
                         </a>
                     @endauth
                 @else
@@ -892,18 +892,18 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
-                        Tidak Tersedia
+                        {{ __('visitor.not_available') }}
                     </div>
                 @endif
 
                 {{-- Ubah tanggal --}}
                 <div class="mt-3 pt-3 border-t border-slate-100">
-                    <p class="text-[0.75rem] font-semibold text-slate-500 mb-2">Ubah Tanggal Menginap</p>
+                    <p class="text-[0.75rem] font-semibold text-slate-500 mb-2">{{ __('visitor.change_dates') }}</p>
                     <form method="GET" action="{{ route('room.show', $room->uuid) }}"
                           class="flex flex-col gap-2">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[0.7rem] text-slate-400 mb-1">Check In</label>
+                                <label class="block text-[0.7rem] text-slate-400 mb-1">{{ __('visitor.check_in') }}</label>
                                 <input type="date" name="check_in"
                                        value="{{ $checkIn ?? date('Y-m-d') }}"
                                        min="{{ date('Y-m-d') }}"
@@ -912,7 +912,7 @@
                                               focus:border-yellow-400 focus:ring-1 focus:ring-yellow-100">
                             </div>
                             <div>
-                                <label class="block text-[0.7rem] text-slate-400 mb-1">Check Out</label>
+                                <label class="block text-[0.7rem] text-slate-400 mb-1">{{ __('visitor.check_out') }}</label>
                                 <input type="date" name="check_out"
                                        value="{{ $checkOut ?? date('Y-m-d', strtotime('+1 day')) }}"
                                        min="{{ date('Y-m-d', strtotime('+1 day')) }}"
@@ -925,7 +925,7 @@
                                 class="w-full py-2 rounded-lg text-[0.78rem] font-semibold
                                        border border-slate-200 bg-white text-slate-600
                                        hover:bg-slate-50 transition-colors cursor-pointer">
-                            Perbarui Harga
+                            {{ __('visitor.update_price') }}
                         </button>
                     </form>
                 </div>
@@ -943,7 +943,7 @@
 
     {{-- Harga ringkas --}}
     <div class="rps-price-wrap">
-        <p class="rps-label">/malam</p>
+        <p class="rps-label">{{ __('visitor.per_night') }}</p>
         @if($hasDiscount)
             <p class="rps-strike">{{ $originalPriceDisplay }}</p>
             <p class="rps-amount disc">{{ $priceDisplay }}</p>
@@ -961,7 +961,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
-                Pesan Sekarang
+                {{ __('visitor.book_now_mobile') }}
             </button>
         @else
             <a href="{{ route('login') }}" class="rps-btn">
@@ -969,7 +969,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                 </svg>
-                Masuk untuk Pesan
+                {{ __('visitor.login_to_book_short') }}
             </a>
         @endauth
     @else
@@ -978,7 +978,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
             </svg>
-            Tidak Tersedia
+            {{ __('visitor.not_available') }}
         </div>
     @endif
 </div>
@@ -1030,7 +1030,16 @@
 @endsection
 
 @push('scripts')
+@php
+$showLang = [
+    'no_checkin'  => __('visitor.no_checkin_date'),
+    'no_checkout' => __('visitor.no_checkout_date'),
+    'default_ci'  => __('visitor.default_checkin'),
+    'default_co'  => __('visitor.default_checkout'),
+];
+@endphp
 <script>
+window.__showLang = @json($showLang);
 /* ═══════════════════════════════════════════════
    PHOTO LIGHTBOX MODAL
 ═══════════════════════════════════════════════ */
@@ -1177,7 +1186,7 @@ function filterSchedule(selectedDate) {
         });
     } else if (data.checkIn.length > 0) {
         ciContainer.insertAdjacentHTML('beforeend',
-            `<div class="schedule-no-data">Tidak ada jadwal check-in untuk tanggal ini</div>`);
+            `<div class="schedule-no-data">${window.__showLang.no_checkin}</div>`);
     } else {
         ciContainer.insertAdjacentHTML('beforeend', `
             <div class="time-pill time-pill-ci">
@@ -1189,7 +1198,7 @@ function filterSchedule(selectedDate) {
                 </div>
                 <div>
                     <p class="time-val">${data.defaultCheckIn}</p>
-                    <p class="time-date">Waktu standar check-in</p>
+                    <p class="time-date">${window.__showLang.default_ci}</p>
                 </div>
             </div>`);
     }
@@ -1218,7 +1227,7 @@ function filterSchedule(selectedDate) {
         });
     } else if (data.checkOut.length > 0) {
         coContainer.insertAdjacentHTML('beforeend',
-            `<div class="schedule-no-data">Tidak ada jadwal check-out untuk tanggal ini</div>`);
+            `<div class="schedule-no-data">${window.__showLang.no_checkout}</div>`);
     } else {
         coContainer.insertAdjacentHTML('beforeend', `
             <div class="time-pill time-pill-co">
@@ -1230,7 +1239,7 @@ function filterSchedule(selectedDate) {
                 </div>
                 <div>
                     <p class="time-val">${data.defaultCheckOut}</p>
-                    <p class="time-date">Waktu standar check-out</p>
+                    <p class="time-date">${window.__showLang.default_co}</p>
                 </div>
             </div>`);
     }

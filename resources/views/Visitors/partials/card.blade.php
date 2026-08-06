@@ -49,7 +49,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                     </svg>
-                    Tidak Tersedia
+                    {{ __('visitor.unavailable') }}
                 </div>
             </div>
         @endif
@@ -57,7 +57,7 @@
         {{-- Status badge --}}
         <span class="card-status-badge absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[0.7rem] font-bold
                      {{ $isAvailable ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500' }}">
-            {{ $isAvailable ? '● Tersedia' : '✕ Penuh' }}
+            {{ $isAvailable ? '● ' . __('visitor.available') : '✕ ' . __('visitor.full') }}
         </span>
 
         {{-- Diskon / foto count badge --}}
@@ -83,7 +83,7 @@
         <div class="flex-1">
             {{-- Nama kamar --}}
             <h3 class="card-name text-[0.98rem] font-bold text-slate-900 leading-tight mb-1.5 truncate">
-                {{ $room->name }}
+                {{ $room->trans('name') }}
             </h3>
 
             {{-- Meta info --}}
@@ -93,7 +93,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
-                    {{ $room->capacity }} org
+                    {{ $room->capacity }} {{ __('visitor.persons') }}
                 </span>
                 @if($room->facilities->count() > 0)
                     <span class="card-meta-sep text-slate-300">·</span>
@@ -102,7 +102,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
-                        {{ $room->facilities->count() }} fasilitas
+                        {{ $room->facilities->count() }} {{ __('visitor.facilities') }}
                     </span>
                 @endif
             </div>
@@ -116,9 +116,9 @@
                     {{ $priceDisplay }}
                 </p>
                 <div class="flex items-center gap-1.5 mt-1 flex-wrap">
-                    <span class="card-price-unit text-[0.72rem] text-slate-400">/malam</span>
+                    <span class="card-price-unit text-[0.72rem] text-slate-400">{{ __('visitor.per_night') }}</span>
                     @if($room->discount_min_nights > 0)
-                        <span class="card-price-unit text-[0.65rem] text-slate-400">· Min. {{ $room->discount_min_nights }} malam</span>
+                        <span class="card-price-unit text-[0.65rem] text-slate-400">· {{ __('visitor.min_nights', ['n' => $room->discount_min_nights]) }}</span>
                     @endif
                 </div>
             @else
@@ -126,7 +126,7 @@
                    style="{{ $isAvailable ? 'color:#eab308;' : '' }}">
                     {{ $priceDisplay }}
                 </p>
-                <p class="card-price-unit text-[0.72rem] text-slate-400 mt-0.5">/malam</p>
+                <p class="card-price-unit text-[0.72rem] text-slate-400 mt-0.5">{{ __('visitor.per_night') }}</p>
             @endif
         </div>
 
@@ -144,7 +144,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                 </svg>
-                Lihat Detail
+                {{ app()->getLocale() === 'en' ? 'View Details' : 'Lihat Detail' }}
             </a>
 
             {{-- Tombol Pesan / Login --}}
@@ -161,7 +161,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        Pesan Sekarang
+                        {{ __('visitor.book_now') }}
                     </a>
                 @else
                     <a href="{{ route('login') }}"
@@ -175,7 +175,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                         </svg>
-                        Masuk
+                        {{ __('visitor.login_to_book') }}
                     </a>
                 @endauth
             @else
@@ -186,10 +186,10 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                     </svg>
-                    Penuh
+                    {{ __('visitor.full') }}
                 </div>
                 <p class="card-hint text-center text-[0.72rem] text-slate-400 mt-0.5">
-                    Coba tanggal lain
+                    {{ app()->getLocale() === 'en' ? 'Try another date' : 'Coba tanggal lain' }}
                 </p>
             @endif
         </div>

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Admin\OtherController;
 
 /*
@@ -15,6 +16,9 @@ use App\Http\Controllers\Admin\OtherController;
 Route::get('/', function () {
     return redirect()->route('index');
 });
+
+// Toggle bahasa (ID / EN)
+Route::get('/locale/{locale}', [LocaleController::class, 'set'])->name('locale.set');
 
 Route::get('/home', [PublicController::class, 'index'])->name('index');
 Route::get('/kamar/{uuid}', [PublicController::class, 'show'])->name('room.show');

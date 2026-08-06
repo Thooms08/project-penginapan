@@ -24,12 +24,14 @@ class OtherController extends Controller
     public function updateAbout(Request $request)
     {
         $request->validate([
-            'about' => 'nullable|string',
+            'about'    => 'nullable|string',
+            'about_en' => 'nullable|string',
         ]);
 
         $other = Other::getInstance();
         $other->update([
             'about'      => $request->about,
+            'about_en'   => $request->about_en,
             'updated_by' => Auth::id(),
         ]);
 
@@ -53,13 +55,15 @@ class OtherController extends Controller
     public function updatePrivacyPolicy(Request $request)
     {
         $request->validate([
-            'privacy_policy' => 'nullable|string',
+            'privacy_policy'    => 'nullable|string',
+            'privacy_policy_en' => 'nullable|string',
         ]);
 
         $other = Other::getInstance();
         $other->update([
-            'privacy_policy' => $request->privacy_policy,
-            'updated_by'     => Auth::id(),
+            'privacy_policy'    => $request->privacy_policy,
+            'privacy_policy_en' => $request->privacy_policy_en,
+            'updated_by'        => Auth::id(),
         ]);
 
         return redirect()
@@ -82,13 +86,15 @@ class OtherController extends Controller
     public function updateTermsConditions(Request $request)
     {
         $request->validate([
-            'terms_conditions' => 'nullable|string',
+            'terms_conditions'    => 'nullable|string',
+            'terms_conditions_en' => 'nullable|string',
         ]);
 
         $other = Other::getInstance();
         $other->update([
-            'terms_conditions' => $request->terms_conditions,
-            'updated_by'       => Auth::id(),
+            'terms_conditions'    => $request->terms_conditions,
+            'terms_conditions_en' => $request->terms_conditions_en,
+            'updated_by'          => Auth::id(),
         ]);
 
         return redirect()

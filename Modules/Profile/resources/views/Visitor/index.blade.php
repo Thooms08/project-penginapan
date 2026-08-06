@@ -1,6 +1,6 @@
 @extends('Visitors.layouts.app')
 
-@section('title', 'Profil Saya')
+@section('title', __('visitor.profile_page_title'))
 
 @push('head')
 <style>
@@ -58,7 +58,7 @@
     @if(session('success'))
     <script>
     document.addEventListener('DOMContentLoaded',function(){
-        Swal.fire({icon:'success',title:'Berhasil',text:@json(session('success')),
+        Swal.fire({icon:'success',title:'{{ __('visitor.profile_success') }}',text:@json(session('success')),
             timer:3000,timerProgressBar:true,showConfirmButton:false,
             toast:true,position:'top-end'});
     });
@@ -67,7 +67,7 @@
     @if(session('success_password'))
     <script>
     document.addEventListener('DOMContentLoaded',function(){
-        Swal.fire({icon:'success',title:'Password Diperbarui',text:@json(session('success_password')),
+        Swal.fire({icon:'success',title:'{{ __('visitor.profile_password_updated') }}',text:@json(session('success_password')),
             timer:3500,timerProgressBar:true,showConfirmButton:false,
             toast:true,position:'top-end'});
     });
@@ -82,10 +82,10 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
-            Beranda
+            {{ __('visitor.home') }}
         </a>
         <span class="text-slate-300">/</span>
-        <span class="text-[.8rem] font-semibold text-slate-900">Profil Saya</span>
+        <span class="text-[.8rem] font-semibold text-slate-900">{{ __('visitor.profile') }}</span>
     </div>
 
     {{-- ── Hero: foto + nama + email ── --}}
@@ -130,7 +130,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        <span>GANTI FOTO</span>
+                        <span>{{ __('visitor.profile_change_photo') }}</span>
                     </div>
                 </div>
 
@@ -172,7 +172,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                         </svg>
-                        Hapus Foto
+                        {{ __('visitor.profile_delete_photo') }}
                     </button>
                 @endif
 
@@ -190,8 +190,8 @@
                 </svg>
             </div>
             <div>
-                <p class="pcard-hdr-title">Informasi Pribadi</p>
-                <p class="pcard-hdr-sub">Nama, email, nomor WA, dan lokasi</p>
+                <p class="pcard-hdr-title">{{ __('visitor.profile_info_title') }}</p>
+                <p class="pcard-hdr-sub">{{ __('visitor.profile_info_sub') }}</p>
             </div>
         </div>
         <div class="pcard-body">
@@ -204,7 +204,7 @@
                     {{-- Nama --}}
                     <div>
                         <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">
-                            Nama Lengkap <span class="text-red-500">*</span>
+                            {{ __('visitor.profile_fullname') }} <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="name"
                                value="{{ old('name', $user->name) }}" required
@@ -220,7 +220,7 @@
                     {{-- Email --}}
                     <div>
                         <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">
-                            Email <span class="text-red-500">*</span>
+                            {{ __('visitor.profile_email') }} <span class="text-red-500">*</span>
                         </label>
                         <input type="email" name="email"
                                value="{{ old('email', $user->email) }}" required
@@ -236,7 +236,7 @@
                     {{-- WA --}}
                     <div>
                         <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">
-                            Nomor WhatsApp
+                            {{ __('visitor.profile_wa') }}
                         </label>
                         <div class="relative">
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[.75rem]
@@ -257,7 +257,7 @@
 
                     {{-- Kota --}}
                     <div>
-                        <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">Kota</label>
+                        <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">{{ __('visitor.profile_city') }}</label>
                         <input type="text" name="city"
                                value="{{ old('city', $profile->city) }}"
                                placeholder="Jakarta"
@@ -268,7 +268,7 @@
 
                     {{-- Provinsi --}}
                     <div>
-                        <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">Provinsi</label>
+                        <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">{{ __('visitor.profile_province') }}</label>
                         <input type="text" name="province"
                                value="{{ old('province', $profile->province) }}"
                                placeholder="DKI Jakarta"
@@ -279,7 +279,7 @@
 
                     {{-- Negara --}}
                     <div>
-                        <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">Negara</label>
+                        <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">{{ __('visitor.profile_country') }}</label>
                         <input type="text" name="country"
                                value="{{ old('country', $profile->country) }}"
                                placeholder="Indonesia"
@@ -302,7 +302,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M5 13l4 4L19 7"/>
                         </svg>
-                        Simpan Perubahan
+                        {{ __('visitor.profile_save') }}
                     </button>
                 </div>
             </form>
@@ -320,8 +320,8 @@
                 </svg>
             </div>
             <div>
-                <p class="pcard-hdr-title">Keamanan Akun</p>
-                <p class="pcard-hdr-sub">Ubah password login Anda</p>
+                <p class="pcard-hdr-title">{{ __('visitor.profile_security_title') }}</p>
+                <p class="pcard-hdr-sub">{{ __('visitor.profile_security_sub') }}</p>
             </div>
         </div>
         <div class="pcard-body">
@@ -334,7 +334,7 @@
                     {{-- Password saat ini --}}
                     <div class="sm:col-span-2">
                         <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">
-                            Password Saat Ini <span class="text-red-500">*</span>
+                            {{ __('visitor.profile_current_password') }} <span class="text-red-500">*</span>
                         </label>
                         <div class="relative">
                             <input type="password" name="current_password" id="currentPass"
@@ -363,7 +363,7 @@
                     {{-- Password baru --}}
                     <div>
                         <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">
-                            Password Baru <span class="text-red-500">*</span>
+                            {{ __('visitor.profile_new_password') }} <span class="text-red-500">*</span>
                         </label>
                         <div class="relative">
                             <input type="password" name="password" id="newPass"
@@ -393,7 +393,7 @@
                     {{-- Konfirmasi password --}}
                     <div>
                         <label class="block text-[.78rem] font-bold text-slate-700 mb-1.5">
-                            Konfirmasi Password <span class="text-red-500">*</span>
+                            {{ __('visitor.profile_confirm_password') }} <span class="text-red-500">*</span>
                         </label>
                         <div class="relative">
                             <input type="password" name="password_confirmation" id="confirmPass"
@@ -424,7 +424,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    Minimal 8 karakter. Kosongkan jika tidak ingin mengganti password.
+                    {{ __('visitor.profile_password_hint') }}
                 </p>
 
                 <div class="mt-4 flex justify-end">
@@ -439,7 +439,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
-                        Perbarui Password
+                        {{ __('visitor.profile_update_password') }}
                     </button>
                 </div>
             </form>
@@ -456,16 +456,79 @@
                 </svg>
             </div>
             <div>
-                <p class="text-[.82rem] font-semibold text-slate-700">Login via Google</p>
-                <p class="text-[.72rem] text-slate-400 mt-0.5">Akun ini menggunakan Google OAuth, penggantian password tidak tersedia.</p>
+                <p class="text-[.82rem] font-semibold text-slate-700">{{ __('visitor.profile_google_login') }}</p>
+                <p class="text-[.72rem] text-slate-400 mt-0.5">{{ __('visitor.profile_google_desc') }}</p>
             </div>
         </div>
     </div>
     @endif
 
+    {{-- ── Card: Bahasa (mobile only) ── --}}
+    @php $__profileLocale = app()->getLocale(); @endphp
+    <div class="pcard">
+        <div class="pcard-hdr">
+            <div class="pcard-hdr-icon" style="background:#f0f9ff;">
+                <svg class="w-4 h-4" style="color:#0369a1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                </svg>
+            </div>
+            <div>
+                <p class="pcard-hdr-title">{{ __('visitor.language') }}</p>
+                <p class="pcard-hdr-sub">
+                    {{ __('visitor.profile_lang_current') }}
+                </p>
+            </div>
+        </div>
+        <div class="pcard-body">
+            <div class="grid grid-cols-2 gap-3">
+                <a href="{{ route('locale.set', 'id') }}"
+                   class="flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl
+                          font-bold text-[0.875rem] text-center transition-all no-underline"
+                   style="{{ $__profileLocale === 'id'
+                       ? 'background:#fef9c3;color:#713f12;border:2px solid #eab308;'
+                       : 'background:#f8fafc;color:#64748b;border:2px solid #e2e8f0;' }}">
+                    <span style="font-size:1.25rem;">🇮🇩</span>
+                    <span>Indonesia</span>
+                    @if($__profileLocale === 'id')
+                        <svg class="w-4 h-4 shrink-0" style="color:#713f12;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    @endif
+                </a>
+                <a href="{{ route('locale.set', 'en') }}"
+                   class="flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl
+                          font-bold text-[0.875rem] text-center transition-all no-underline"
+                   style="{{ $__profileLocale === 'en'
+                       ? 'background:#fef9c3;color:#713f12;border:2px solid #eab308;'
+                       : 'background:#f8fafc;color:#64748b;border:2px solid #e2e8f0;' }}">
+                    <span style="font-size:1.25rem;">🇬🇧</span>
+                    <span>English</span>
+                    @if($__profileLocale === 'en')
+                        <svg class="w-4 h-4 shrink-0" style="color:#713f12;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    @endif
+                </a>
+            </div>
+        </div>
+    </div>
+
 </div>{{-- /profile-wrap --}}
 
+@php
+$profileLang = [
+    'password_match'         => __('visitor.profile_password_match'),
+    'password_mismatch'      => __('visitor.profile_password_mismatch'),
+    'photo_delete_title'     => __('visitor.profile_photo_delete_title'),
+    'photo_delete_text'      => __('visitor.profile_photo_delete_text'),
+    'photo_delete_confirm'   => __('visitor.profile_photo_delete_confirm'),
+    'photo_delete_cancel'    => __('visitor.profile_photo_delete_cancel'),
+];
+@endphp
 <script>
+window.__profileLang = @json($profileLang);
+
 function togglePass(id, btn) {
     const inp = document.getElementById(id);
     if (!inp) return;
@@ -479,22 +542,22 @@ function checkMatch() {
     if (!np || !cp) { hint.classList.add('hidden'); return; }
     hint.classList.remove('hidden');
     if (np === cp) {
-        hint.textContent = '✓ Password cocok';
+        hint.textContent = window.__profileLang.password_match;
         hint.className   = 'mt-1 text-[.72rem] text-emerald-600';
     } else {
-        hint.textContent = '✗ Password tidak cocok';
+        hint.textContent = window.__profileLang.password_mismatch;
         hint.className   = 'mt-1 text-[.72rem] text-red-500';
     }
 }
 
 function confirmDeleteFoto() {
     Swal.fire({
-        title: 'Hapus foto profil?',
-        text:  'Foto akan dihapus permanen.',
+        title: window.__profileLang.photo_delete_title,
+        text:  window.__profileLang.photo_delete_text,
         icon:  'warning',
         showCancelButton: true,
-        confirmButtonText: 'Ya, Hapus',
-        cancelButtonText:  'Batal',
+        confirmButtonText: window.__profileLang.photo_delete_confirm,
+        cancelButtonText:  window.__profileLang.photo_delete_cancel,
         reverseButtons: true,
         customClass: { confirmButton: 'swal-delete-btn' },
         buttonsStyling: true,

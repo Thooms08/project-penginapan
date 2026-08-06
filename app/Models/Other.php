@@ -11,10 +11,28 @@ class Other extends Model
 
     protected $fillable = [
         'about',
+        'about_en',
         'privacy_policy',
+        'privacy_policy_en',
         'terms_conditions',
+        'terms_conditions_en',
         'updated_by',
     ];
+
+    /**
+     * Kembalikan nilai field sesuai locale aktif.
+     * Jika versi EN kosong, fallback ke versi ID.
+     */
+    public function trans(string $field): ?string
+    {
+        if (app()->getLocale() === 'en') {
+            $enValue = $this->getAttribute($field . '_en');
+            if (!empty($enValue)) {
+                return $enValue;
+            }
+        }
+        return $this->getAttribute($field);
+    }
 
     protected $casts = [
         'created_at' => 'datetime',

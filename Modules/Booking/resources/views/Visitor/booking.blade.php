@@ -1,6 +1,6 @@
 @extends('Visitors.layouts.app')
 
-@section('title', 'Booking — ' . $room->name)
+@section('title', __('visitor.bk_breadcrumb_booking') . ' — ' . $room->trans('name'))
 
 @push('head')
 {{-- Midtrans Snap.js --}}
@@ -137,12 +137,12 @@
            class="inline-flex items-center gap-1.5 text-[.8rem] font-semibold text-slate-500 hover:text-slate-900 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>Beranda
+            </svg>{{ __('visitor.bk_breadcrumb_home') }}
         </a>
         <span class="text-slate-300 text-xs">/</span>
-        <span class="text-[.8rem] font-semibold text-slate-400">Kamar</span>
+        <span class="text-[.8rem] font-semibold text-slate-400">{{ __('visitor.bk_breadcrumb_room') }}</span>
         <span class="text-slate-300 text-xs">/</span>
-        <span class="text-[.8rem] font-semibold text-slate-900">Booking</span>
+        <span class="text-[.8rem] font-semibold text-slate-900">{{ __('visitor.bk_breadcrumb_booking') }}</span>
     </div>
 
     {{-- Stepper --}}
@@ -153,17 +153,17 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
                 </svg>
             </div>
-            <span class="bk-step-label">Pilih Kamar</span>
+            <span class="bk-step-label">{{ __('visitor.bk_step_choose_room') }}</span>
         </div>
         <div class="bk-step-line done"></div>
         <div class="bk-step active">
             <div class="bk-step-circle">2</div>
-            <span class="bk-step-label">Detail Booking</span>
+            <span class="bk-step-label">{{ __('visitor.bk_step_detail') }}</span>
         </div>
         <div class="bk-step-line"></div>
         <div class="bk-step idle">
             <div class="bk-step-circle">3</div>
-            <span class="bk-step-label">Konfirmasi</span>
+            <span class="bk-step-label">{{ __('visitor.bk_step_confirm') }}</span>
         </div>
     </div>
 
@@ -183,8 +183,8 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="bk-card-title">Kamar yang Dipilih</p>
-                        <p class="bk-card-sub">Detail kamar yang akan dipesan</p>
+                        <p class="bk-card-title">{{ __('visitor.bk_card_room_title') }}</p>
+                        <p class="bk-card-sub">{{ __('visitor.bk_card_room_sub') }}</p>
                     </div>
                 </div>
                 <div class="bk-card-body">
@@ -207,11 +207,11 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-[1.05rem] font-extrabold text-slate-900 leading-tight mb-1">
-                                {{ $room->name }}
+                                {{ $room->trans('name') }}
                             </p>
                             @if($room->description)
                                 <p class="text-[.78rem] text-slate-500 mb-2 leading-relaxed line-clamp-2">
-                                    {{ $room->description }}
+                                    {{ $room->trans('description') }}
                                 </p>
                             @endif
                             <div class="flex flex-wrap gap-1.5">
@@ -220,26 +220,26 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
                                     </svg>
-                                    {{ $room->capacity }} Tamu
+                                    {{ $room->capacity }} {{ __('visitor.bk_guests') }}
                                 </span>
                                 <span class="room-badge" style="background:#f0fdf4;color:#166534;">
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    Tersedia
+                                    {{ __('visitor.bk_available') }}
                                 </span>
                                 @foreach($facilities->take(4) as $f)
                                     <span class="room-badge" style="background:#eff6ff;color:#1e40af;">
-                                        {{ $f->name }}
+                                        {{ $f->getTransName() }}
                                     </span>
                                 @endforeach
                             </div>
                             <p class="mt-3 text-[.85rem] font-bold" style="color:var(--ytext);">
                                 Rp {{ number_format($room->price, 0, ',', '.') }}
-                                <span class="font-normal text-slate-400 text-[.75rem]">/ malam</span>
+                                <span class="font-normal text-slate-400 text-[.75rem]">{{ __('visitor.bk_per_night') }}</span>
                                 @if($room->has_discount)
                                     <span class="ml-2 text-[.72rem] text-green-600 font-semibold">
-                                        Diskon {{ $room->formatted_discount }}
+                                        {{ __('visitor.bk_discount') }} {{ $room->formatted_discount }}
                                     </span>
                                 @endif
                             </p>
@@ -258,8 +258,8 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="bk-card-title">Tanggal Menginap</p>
-                        <p class="bk-card-sub">Pilih tanggal check-in dan check-out</p>
+                        <p class="bk-card-title">{{ __('visitor.bk_dates_title') }}</p>
+                        <p class="bk-card-sub">{{ __('visitor.bk_dates_sub') }}</p>
                     </div>
                 </div>
                 <div class="bk-card-body">
@@ -277,18 +277,18 @@
                     <div class="date-grid">
                         <div>
                             <label class="bk-input-label" for="checkIn">
-                                Check-In <span class="text-red-500">*</span>
+                                {{ __('visitor.bk_checkin_label') }} <span class="text-red-500">*</span>
                             </label>
                             <input type="date" id="checkIn" name="check_in"
                                    value="{{ old('check_in', $preCheckIn ?? '') }}"
                                    class="bk-input {{ $errors->has('check_in') ? 'error' : '' }}">
                             <p id="checkInNote" class="text-[.72rem] text-slate-400 mt-1 hidden">
-                                Tanggal check-in yang dipilih
+                                {{ __('visitor.bk_checkin_note') }}
                             </p>
                         </div>
                         <div>
                             <label class="bk-input-label" for="checkOut">
-                                Check-Out <span class="text-red-500">*</span>
+                                {{ __('visitor.bk_checkout_label') }} <span class="text-red-500">*</span>
                             </label>
                             <input type="date" id="checkOut" name="check_out"
                                    value="{{ old('check_out', $preCheckOut ?? '') }}"
@@ -306,16 +306,16 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <span id="durationText">— malam</span>
+                        <span id="durationText">—</span>
                     </div>
                     {{-- Guest note --}}
                     <div class="mt-4">
                         <label class="bk-input-label" for="guestNote">
-                            Catatan Khusus
-                            <span class="font-normal text-slate-400">(opsional)</span>
+                            {{ __('visitor.bk_note_label') }}
+                            <span class="font-normal text-slate-400">{{ __('visitor.bk_note_optional') }}</span>
                         </label>
                         <textarea id="guestNote" name="note" rows="2"
-                                  placeholder="Contoh: tiba tengah malam, butuh extra bed, alergi bulu binatang..."
+                                  placeholder="{{ __('visitor.bk_note_placeholder') }}"
                                   class="bk-input resize-none" style="height:auto;">{{ old('note') }}</textarea>
                     </div>
                 </div>
@@ -331,8 +331,8 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="bk-card-title">Metode Pembayaran</p>
-                        <p class="bk-card-sub">Pilih cara pembayaran yang diinginkan</p>
+                        <p class="bk-card-title">{{ __('visitor.bk_pay_title') }}</p>
+                        <p class="bk-card-sub">{{ __('visitor.bk_pay_sub') }}</p>
                     </div>
                 </div>
                 <div class="bk-card-body">
@@ -349,18 +349,17 @@
                                 </svg>
                             </div>
                             <div class="flex-1 pr-7">
-                                <p class="pay-label">Down Payment (DP)</p>
+                                <p class="pay-label">{{ __('visitor.bk_dp_label') }}</p>
                                 <p class="pay-desc">
-                                    Bayar uang muka sebesar <strong>50%</strong> dari total harga sekarang
-                                    untuk mengamankan kamar. Sisa dilunasi saat check-in.
+                                    {!! __('visitor.bk_dp_desc') !!}
                                 </p>
                                 <div class="flex flex-wrap gap-1.5 mt-1.5">
-                                    <span class="pay-tag" style="background:#fef9c3;color:#92400e;">Amankan kamar sekarang</span>
-                                    <span class="pay-tag" style="background:#f0fdf4;color:#166534;">Bayar lebih ringan</span>
+                                    <span class="pay-tag" style="background:#fef9c3;color:#92400e;">{{ __('visitor.bk_dp_tag1') }}</span>
+                                    <span class="pay-tag" style="background:#f0fdf4;color:#166534;">{{ __('visitor.bk_dp_tag2') }}</span>
                                 </div>
                                 <div id="dpPreview" class="hidden mt-2 p-2.5 rounded-xl"
                                      style="background:#f0fdf4;border:1px solid #bbf7d0;">
-                                    <p class="text-[.73rem] text-slate-500 mb-0.5">Dibayar sekarang (50%)</p>
+                                    <p class="text-[.73rem] text-slate-500 mb-0.5">{{ __('visitor.bk_dp_now_label') }}</p>
                                     <p class="text-[.95rem] font-extrabold text-green-700" id="dpAmountText">Rp 0</p>
                                 </div>
                             </div>
@@ -382,21 +381,20 @@
                                 </svg>
                             </div>
                             <div class="flex-1 pr-7">
-                                <p class="pay-label">Bayar Lunas Sekarang</p>
+                                <p class="pay-label">{{ __('visitor.bk_full_label') }}</p>
                                 <p class="pay-desc">
-                                    Bayar <strong>100%</strong> dari total harga sekarang via payment gateway.
-                                    Booking langsung terkonfirmasi otomatis.
+                                    {!! __('visitor.bk_full_desc') !!}
                                 </p>
                                 <div class="flex flex-wrap gap-1.5 mt-1.5">
-                                    <span class="pay-tag" style="background:#eff6ff;color:#1e40af;">Konfirmasi instan</span>
-                                    <span class="pay-tag" style="background:#fce7f3;color:#9d174d;">Tidak perlu bayar lagi saat check-in</span>
+                                    <span class="pay-tag" style="background:#eff6ff;color:#1e40af;">{{ __('visitor.bk_full_tag1') }}</span>
+                                    <span class="pay-tag" style="background:#fce7f3;color:#9d174d;">{{ __('visitor.bk_full_tag2') }}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-4 flex items-center gap-2 flex-wrap">
-                        <p class="text-[.68rem] text-slate-400 font-semibold uppercase tracking-wide shrink-0">Diterima via:</p>
+                        <p class="text-[.68rem] text-slate-400 font-semibold uppercase tracking-wide shrink-0">{{ __('visitor.bk_accepted_via') }}</p>
                         <div class="pg-logos">
                             <span class="pg-logo">Midtrans</span>
                             <span class="pg-logo">QRIS</span>
@@ -421,30 +419,30 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="bk-card-title">Ringkasan Biaya</p>
-                        <p class="bk-card-sub" id="summarySubtitle">Pilih tanggal untuk melihat total</p>
+                        <p class="bk-card-title">{{ __('visitor.bk_summary_title') }}</p>
+                        <p class="bk-card-sub" id="summarySubtitle">{{ __('visitor.bk_summary_sub') }}</p>
                     </div>
                 </div>
                 <div class="bk-card-body">
                     <div id="priceDetail" class="hidden">
                         <div class="price-row">
-                            <span class="lbl">Harga per malam</span>
+                            <span class="lbl">{{ __('visitor.bk_price_night') }}</span>
                             <span class="val" id="sumPricePerNight">Rp 0</span>
                         </div>
                         <div class="price-row">
-                            <span class="lbl">Durasi</span>
-                            <span class="val" id="sumNight">— malam</span>
+                            <span class="lbl">{{ __('visitor.bk_duration') }}</span>
+                            <span class="val" id="sumNight">—</span>
                         </div>
                         <div class="price-row">
-                            <span class="lbl">Subtotal</span>
+                            <span class="lbl">{{ __('visitor.bk_subtotal') }}</span>
                             <span class="val" id="sumSubtotal">Rp 0</span>
                         </div>
                         <div class="price-row">
-                            <span class="lbl">Pajak (10%)</span>
+                            <span class="lbl">{{ __('visitor.bk_tax') }}</span>
                             <span class="val" id="sumTax">Rp 0</span>
                         </div>
                         <div class="price-row total mt-1 pt-2" style="border-top:1px solid #e2e8f0;">
-                            <span class="lbl">Total</span>
+                            <span class="lbl">{{ __('visitor.bk_total') }}</span>
                             <span class="val" id="sumTotal">Rp 0</span>
                         </div>
                     </div>
@@ -453,7 +451,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <p class="text-[.78rem] text-slate-400">Isi tanggal check-in dan check-out untuk melihat rincian biaya</p>
+                        <p class="text-[.78rem] text-slate-400">{{ __('visitor.bk_placeholder_dates') }}</p>
                     </div>
                     {{-- DP breakdown --}}
                     <div id="dpBreakdown" class="hidden mt-3 p-3 rounded-xl"
@@ -463,14 +461,14 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            Rincian Down Payment
+                            {{ __('visitor.bk_dp_detail') }}
                         </p>
                         <div class="flex justify-between text-[.78rem] mb-1">
-                            <span class="text-slate-500">DP sekarang (50%)</span>
+                            <span class="text-slate-500">{{ __('visitor.bk_dp_now') }}</span>
                             <span class="font-bold text-green-700" id="sumDP">Rp 0</span>
                         </div>
                         <div class="flex justify-between text-[.78rem]">
-                            <span class="text-slate-500">Sisa saat check-in (50%)</span>
+                            <span class="text-slate-500">{{ __('visitor.bk_dp_rest') }}</span>
                             <span class="font-bold text-slate-700" id="sumRemaining">Rp 0</span>
                         </div>
                     </div>
@@ -481,13 +479,13 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
-                            <span id="ctaBtnDesktopLabel">Pilih Tanggal &amp; Metode Bayar</span>
+                            <span id="ctaBtnDesktopLabel">{{ __('visitor.bk_select_date_method') }}</span>
                         </button>
                         <a href="{{ route('index') }}" class="bk-btn-outline">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                             </svg>
-                            Batalkan
+                            {{ __('visitor.bk_cancel') }}
                         </a>
                     </div>
                     <p class="mt-3 text-[.68rem] text-slate-400 flex items-start gap-1.5 leading-relaxed">
@@ -495,7 +493,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
-                        Pembayaran diamankan dengan enkripsi SSL. Data kartu tidak disimpan di server kami.
+                        {{ __('visitor.bk_ssl_note') }}
                     </p>
                 </div>
             </div>
@@ -509,14 +507,14 @@
     <div class="flex items-center gap-3">
         <div class="flex-1 min-w-0">
             <p class="text-[.68rem] text-slate-400 font-semibold uppercase tracking-wide leading-none mb-0.5">
-                <span id="mobileCtaMethod">Pilih metode bayar</span>
+                <span id="mobileCtaMethod">{{ __('visitor.bk_mobile_method') }}</span>
             </p>
             <p class="text-[.95rem] font-extrabold text-slate-900 leading-tight truncate" id="mobileCtaPrice">—</p>
         </div>
         <button type="button" id="ctaBtnMobile"
                 class="bk-btn-primary shrink-0 py-2.5 px-5 text-[.875rem]"
                 style="width:auto;" disabled onclick="submitBooking()">
-            Lanjutkan
+            {{ __('visitor.bk_continue') }}
         </button>
     </div>
 </div>
@@ -534,8 +532,8 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="font-extrabold text-slate-900 text-[.95rem]">Konfirmasi Down Payment</p>
-                        <p class="text-[.72rem] text-slate-400">Bayar 50% sekarang untuk amankan kamar</p>
+                        <p class="font-extrabold text-slate-900 text-[.95rem]">{{ __('visitor.bk_dp_modal_title') }}</p>
+                        <p class="text-[.72rem] text-slate-400">{{ __('visitor.bk_dp_modal_sub') }}</p>
                     </div>
                 </div>
                 <button onclick="closeDpModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-1">
@@ -548,8 +546,8 @@
         <div class="dp-modal-body">
             <div class="rounded-xl p-4 mb-4" style="background:#f8fafc;border:1px solid #e2e8f0;">
                 <div class="flex justify-between text-[.82rem] py-1.5 border-b border-slate-100">
-                    <span class="text-slate-500">Kamar</span>
-                    <span class="font-semibold text-slate-900 text-right ml-4 truncate max-w-[160px]">{{ $room->name }}</span>
+                    <span class="text-slate-500">{{ __('visitor.bk_dp_modal_room') }}</span>
+                    <span class="font-semibold text-slate-900 text-right ml-4 truncate max-w-[160px]">{{ $room->trans('name') }}</span>
                 </div>
                 <div class="flex justify-between text-[.82rem] py-1.5 border-b border-slate-100">
                     <span class="text-slate-500">Check-In</span>
@@ -560,19 +558,19 @@
                     <span class="font-semibold text-slate-900" id="dpModalCheckOut">—</span>
                 </div>
                 <div class="flex justify-between text-[.82rem] py-1.5 border-b border-slate-100">
-                    <span class="text-slate-500">Durasi</span>
+                    <span class="text-slate-500">{{ __('visitor.bk_dp_modal_nights') }}</span>
                     <span class="font-semibold text-slate-900" id="dpModalNights">—</span>
                 </div>
                 <div class="flex justify-between text-[.82rem] py-1.5 border-b border-slate-100">
-                    <span class="text-slate-500">Total Biaya</span>
+                    <span class="text-slate-500">{{ __('visitor.bk_dp_modal_total') }}</span>
                     <span class="font-semibold text-slate-900" id="dpModalTotal">Rp 0</span>
                 </div>
                 <div class="flex justify-between text-[.88rem] py-2 mt-1" style="border-top:2px solid #e2e8f0;">
-                    <span class="font-bold text-slate-700">Bayar DP Sekarang (50%)</span>
+                    <span class="font-bold text-slate-700">{{ __('visitor.bk_dp_modal_now') }}</span>
                     <span class="font-extrabold text-green-700 text-[1rem]" id="dpModalAmount">Rp 0</span>
                 </div>
                 <div class="flex justify-between text-[.78rem] pb-1">
-                    <span class="text-slate-400">Sisa bayar saat check-in</span>
+                    <span class="text-slate-400">{{ __('visitor.bk_dp_modal_rest') }}</span>
                     <span class="font-semibold text-slate-500" id="dpModalRemaining">Rp 0</span>
                 </div>
             </div>
@@ -582,7 +580,7 @@
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <p class="text-[.75rem] text-amber-800 leading-relaxed">
-                    Down payment bersifat <strong>non-refundable</strong>. Pastikan tanggal yang Anda pilih sudah benar sebelum melanjutkan pembayaran.
+                    {!! __('visitor.bk_dp_nonrefund') !!}
                 </p>
             </div>
             <button type="button" id="dpPayBtn" onclick="processPayment('dp')"
@@ -591,14 +589,44 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                 </svg>
-                BAYAR DP SEKARANG
+                {{ __('visitor.bk_dp_pay_now') }}
             </button>
         </div>
     </div>
 </div>
 
 @push('scripts')
+@php
+$bkLang = [
+    'checking_avail'  => __('visitor.bk_checking_avail'),
+    'room_avail'      => __('visitor.bk_room_avail'),
+    'room_not_avail'  => __('visitor.bk_room_not_avail'),
+    'max_checkout'    => __('visitor.bk_max_checkout'),
+    'invalid_title'   => __('visitor.bk_invalid_date_title'),
+    'invalid_text'    => __('visitor.bk_invalid_date_text'),
+    'pending_title'   => __('visitor.bk_pay_pending_title'),
+    'pending_text'    => __('visitor.bk_pay_pending_text'),
+    'see_history'     => __('visitor.bk_see_history'),
+    'fail_title'      => __('visitor.bk_pay_fail_title'),
+    'fail_text'       => __('visitor.bk_pay_fail_text'),
+    'cancel_title'    => __('visitor.bk_pay_cancel_title'),
+    'cancel_text'     => __('visitor.bk_pay_cancel_text'),
+    'stay_here'       => __('visitor.bk_stay_here'),
+    'conn_title'      => __('visitor.bk_conn_error_title'),
+    'conn_text'       => __('visitor.bk_conn_error_text'),
+    'processing'      => __('visitor.bk_processing'),
+    'nights_unit'     => __('visitor.bk_nights_unit'),
+    'select_method'   => __('visitor.bk_mobile_method'),
+    'no_dates_method' => __('visitor.bk_select_date_method'),
+    'unavailable'     => __('visitor.bk_unavailable'),
+    'select_pay'      => __('visitor.bk_select_method'),
+    'dp_pay'          => __('visitor.bk_dp_pay_label'),
+    'full_pay'        => __('visitor.bk_full_pay_label'),
+    'summary_sub'     => __('visitor.bk_summary_sub'),
+];
+@endphp
 <script>
+window.__bkLang = @json($bkLang);
 /* ══════════════════════════════════════════════════════════
    Booking Page — JavaScript
    ══════════════════════════════════════════════════════════ */
@@ -664,7 +692,7 @@ function checkAvail() {
 
     const status = document.getElementById('availStatus');
     status.className = 'mt-3 p-2.5 rounded-xl text-[.78rem] font-semibold flex items-center gap-2';
-    status.innerHTML = '<svg class="w-4 h-4 animate-spin text-slate-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg> Mengecek ketersediaan...';
+    status.innerHTML = '<svg class="w-4 h-4 animate-spin text-slate-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg> ' + window.__bkLang.checking_avail;
     status.classList.remove('hidden');
 
     fetch(`${AVAIL_URL}?room_id=${ROOM_ID}&check_in=${ci}&check_out=${co}`)
@@ -677,18 +705,18 @@ function checkAvail() {
                 status.style.background = '#f0fdf4';
                 status.style.border     = '1px solid #bbf7d0';
                 status.style.color      = '#166534';
-                status.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Kamar tersedia untuk tanggal yang dipilih!';
+                status.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> ' + window.__bkLang.room_avail;
             } else {
                 status.style.background = '#fef2f2';
                 status.style.border     = '1px solid #fecaca';
                 status.style.color      = '#dc2626';
-                status.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Kamar tidak tersedia. Silakan pilih tanggal lain.';
+                status.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> ' + window.__bkLang.room_not_avail;
             }
 
             if (maxCheckOutDate) {
                 document.getElementById('checkOut').max = maxCheckOutDate;
                 const hint = document.getElementById('maxCheckOutHint');
-                hint.textContent = 'Maks. check-out: ' + fmtDate(maxCheckOutDate);
+                hint.textContent = window.__bkLang.max_checkout + ' ' + fmtDate(maxCheckOutDate);
                 document.getElementById('checkOutNote').classList.remove('hidden');
             }
 
@@ -717,15 +745,15 @@ function calcDuration() {
     if (d2 <= d1) {
         nights = 0; isAvailable = false;
         document.getElementById('durationBadge').classList.add('hidden');
-        Swal.fire({ icon:'warning', title:'Tanggal Tidak Valid',
-            text:'Tanggal check-out harus setelah check-in.',
+        Swal.fire({ icon:'warning', title: window.__bkLang.invalid_title,
+            text: window.__bkLang.invalid_text,
             toast:true, position:'top-end', timer:3000,
             timerProgressBar:true, showConfirmButton:false });
         updateSummary(); updateCTA(); return;
     }
 
     nights = Math.round((d2 - d1) / 86400000);
-    document.getElementById('durationText').textContent = nights + ' malam';
+    document.getElementById('durationText').textContent = nights + ' ' + window.__bkLang.nights_unit;
     document.getElementById('durationBadge').classList.remove('hidden');
 
     // Debounce availability check
@@ -746,7 +774,7 @@ function updateSummary() {
     if (nights <= 0) {
         ph.classList.remove('hidden'); pd.classList.add('hidden');
         dpBD.classList.add('hidden'); dpPv.classList.add('hidden');
-        sub.textContent = 'Pilih tanggal untuk melihat total';
+        sub.textContent = window.__bkLang.summary_sub;
         return;
     }
 
@@ -754,7 +782,7 @@ function updateSummary() {
     ph.classList.add('hidden'); pd.classList.remove('hidden');
 
     document.getElementById('sumPricePerNight').textContent = fmt(p.ppn);
-    document.getElementById('sumNight').textContent         = nights + ' malam';
+    document.getElementById('sumNight').textContent         = nights + ' ' + window.__bkLang.nights_unit;
     document.getElementById('sumSubtotal').textContent      = fmt(p.sub);
     document.getElementById('sumTax').textContent           = fmt(p.tax);
     document.getElementById('sumTotal').textContent         = fmt(p.tot);
@@ -762,7 +790,7 @@ function updateSummary() {
     document.getElementById('sumRemaining').textContent     = fmt(p.rem);
     document.getElementById('dpAmountText').textContent     = fmt(p.dp);
 
-    sub.textContent = nights + ' malam • ' + fmt(p.tot);
+    sub.textContent = nights + ' ' + window.__bkLang.nights_unit + ' • ' + fmt(p.tot);
 
     if (selectedMethod === 'dp') {
         dpBD.classList.remove('hidden'); dpPv.classList.remove('hidden');
@@ -784,10 +812,10 @@ function updateCTA() {
     btnM.disabled = !ready;
 
     if (!ready) {
-        lbl.textContent = nights <= 0 ? 'Pilih Tanggal & Metode Bayar'
-                        : !isAvailable ? 'Kamar Tidak Tersedia'
-                        : 'Pilih Metode Bayar';
-        mMet.textContent = 'Pilih metode bayar';
+        lbl.textContent = nights <= 0 ? window.__bkLang.no_dates_method
+                        : !isAvailable ? window.__bkLang.unavailable
+                        : window.__bkLang.select_pay;
+        mMet.textContent = window.__bkLang.select_method;
         mPrc.textContent = nights > 0 ? fmt(calcPrices(nights, PRICE_PER_NIGHT).tot) : '—';
         return;
     }
@@ -796,11 +824,11 @@ function updateCTA() {
     const payNow = selectedMethod === 'dp' ? p.dp : p.tot;
 
     if (selectedMethod === 'dp') {
-        lbl.textContent  = 'Bayar DP ' + fmt(payNow);
-        mMet.textContent = 'Down Payment (50%)';
+        lbl.textContent  = window.__bkLang.dp_pay + ' ' + fmt(payNow);
+        mMet.textContent = window.__bkLang.dp_pay + ' (50%)';
     } else {
-        lbl.textContent  = 'Bayar Lunas ' + fmt(payNow);
-        mMet.textContent = 'Bayar Lunas (100%)';
+        lbl.textContent  = window.__bkLang.full_pay + ' ' + fmt(payNow);
+        mMet.textContent = window.__bkLang.full_pay + ' (100%)';
     }
     mPrc.textContent = fmt(payNow);
 }
@@ -813,7 +841,7 @@ function openDpModal() {
 
     document.getElementById('dpModalCheckIn').textContent   = fmtDate(ci);
     document.getElementById('dpModalCheckOut').textContent  = fmtDate(co);
-    document.getElementById('dpModalNights').textContent    = nights + ' malam';
+    document.getElementById('dpModalNights').textContent    = nights + ' ' + window.__bkLang.nights_unit;
     document.getElementById('dpModalTotal').textContent     = fmt(p.tot);
     document.getElementById('dpModalAmount').textContent    = fmt(p.dp);
     document.getElementById('dpModalRemaining').textContent = fmt(p.rem);
@@ -848,7 +876,7 @@ function processPayment(payType) {
         : document.getElementById('ctaBtnDesktop');
     const origText = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg> Memproses...';
+    btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg> ' + window.__bkLang.processing;
 
     fetch(STORE_URL, {
         method: 'POST',
@@ -891,22 +919,22 @@ function processPayment(payType) {
             },
             onPending: function(result) {
                 Swal.fire({
-                    icon: 'info', title: 'Pembayaran Tertunda',
-                    text: 'Selesaikan pembayaran Anda sesuai instruksi yang diberikan.',
-                    confirmButtonText: 'Lihat Riwayat',
+                    icon: 'info', title: window.__bkLang.pending_title,
+                    text: window.__bkLang.pending_text,
+                    confirmButtonText: window.__bkLang.see_history,
                     customClass: { confirmButton: 'swal-confirm-btn' }
                 }).then(() => { window.location.href = URL_PENDING; });
             },
             onError: function(result) {
-                Swal.fire({ icon:'error', title:'Pembayaran Gagal',
-                    text:'Terjadi kesalahan saat memproses pembayaran. Silakan coba lagi.' });
+                Swal.fire({ icon:'error', title: window.__bkLang.fail_title,
+                    text: window.__bkLang.fail_text });
             },
             onClose: function() {
                 Swal.fire({
-                    icon: 'warning', title: 'Pembayaran Dibatalkan',
-                    text: 'Anda menutup jendela pembayaran. Booking Anda masih tersimpan.',
-                    confirmButtonText: 'Lihat Riwayat',
-                    showCancelButton: true, cancelButtonText: 'Tetap di sini',
+                    icon: 'warning', title: window.__bkLang.cancel_title,
+                    text: window.__bkLang.cancel_text,
+                    confirmButtonText: window.__bkLang.see_history,
+                    showCancelButton: true, cancelButtonText: window.__bkLang.stay_here,
                     customClass: { confirmButton: 'swal-confirm-btn' }
                 }).then(r => { if (r.isConfirmed) window.location.href = URL_PENDING; });
             }
@@ -915,8 +943,8 @@ function processPayment(payType) {
     .catch(err => {
         btn.disabled  = false;
         btn.innerHTML = origText;
-        Swal.fire({ icon:'error', title:'Koneksi Bermasalah',
-            text:'Gagal menghubungi server. Periksa koneksi internet Anda.' });
+        Swal.fire({ icon:'error', title: window.__bkLang.conn_title,
+            text: window.__bkLang.conn_text });
     });
 }
 

@@ -239,18 +239,18 @@
 
     {{-- Nav Links --}}
     <nav class="pub-topbar-nav">
-        <a href="{{ route('index') }}" class="{{ request()->routeIs('index') ? 'active' : '' }}">Beranda</a>
+        <a href="{{ route('index') }}" class="{{ request()->routeIs('index') ? 'active' : '' }}">{{ __('visitor.home') }}</a>
         @auth
             @if(Auth::user()->role === 'visitor')
                 <a href="{{ route('booking.history') }}"
-                   class="{{ request()->routeIs('booking.history') ? 'active' : '' }}">Riwayat</a>
+                   class="{{ request()->routeIs('booking.history') ? 'active' : '' }}">{{ __('visitor.history') }}</a>
             @else
-                <a href="{{ route('index') }}#kamar">Kamar</a>
+                <a href="{{ route('index') }}#kamar">{{ __('visitor.rooms') }}</a>
             @endif
         @else
-            <a href="{{ route('index') }}#kamar">Kamar</a>
+            <a href="{{ route('index') }}#kamar">{{ __('visitor.rooms') }}</a>
         @endauth
-        <a href="{{ route('index') }}#tentang">Tentang</a>
+        <a href="{{ route('index') }}#tentang">{{ __('visitor.about_us') }}</a>
 
         {{-- Dropdown: Info Lainnya --}}
         <div class="pub-topbar-dropdown" id="infoDropdown">
@@ -272,21 +272,21 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    Tentang Kami
+                    {{ __('visitor.about_us') }}
                 </a>
                 <a href="{{ route('privacy-policy') }}" class="pub-drop-item {{ request()->routeIs('privacy-policy') ? 'active' : '' }}" role="menuitem">
                     <svg class="w-4 h-4 shrink-0" style="color:#9d174d;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                     </svg>
-                    Kebijakan &amp; Privasi
+                    {{ __('visitor.privacy_policy') }}
                 </a>
                 <a href="{{ route('terms-conditions') }}" class="pub-drop-item {{ request()->routeIs('terms-conditions') ? 'active' : '' }}" role="menuitem">
                     <svg class="w-4 h-4 shrink-0" style="color:#5b21b6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
-                    Syarat &amp; Ketentuan
+                    {{ __('visitor.terms_conditions') }}
                 </a>
             </div>
         </div>
@@ -298,6 +298,24 @@
 
     {{-- Right side --}}
     <div class="pub-topbar-right">
+
+        {{-- ── Language Toggle ── --}}
+        @php $__locale = app()->getLocale(); @endphp
+        <div style="display:flex;align-items:center;gap:2px;background:#f1f5f9;border-radius:8px;padding:3px;">
+            <a href="{{ route('locale.set', 'id') }}"
+               title="Bahasa Indonesia"
+               style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:0.75rem;font-weight:700;text-decoration:none;transition:all 0.12s;
+                      {{ $__locale === 'id' ? 'background:white;color:#713f12;box-shadow:0 1px 3px rgba(0,0,0,0.1);' : 'color:#64748b;' }}">
+                🇮🇩 ID
+            </a>
+            <a href="{{ route('locale.set', 'en') }}"
+               title="English"
+               style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:0.75rem;font-weight:700;text-decoration:none;transition:all 0.12s;
+                      {{ $__locale === 'en' ? 'background:white;color:#713f12;box-shadow:0 1px 3px rgba(0,0,0,0.1);' : 'color:#64748b;' }}">
+                🇬🇧 EN
+            </a>
+        </div>
+
         @auth
             {{-- User badge --}}
             @php
@@ -360,14 +378,14 @@
 
         {{-- Beranda --}}
         <a href="{{ route('index') }}" class="bbar-item {{ request()->routeIs('index') ? 'active' : '' }}"
-           aria-label="Beranda">
+           aria-label="{{ __('visitor.home') }}">
             <div class="bbar-icon-wrap">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
             </div>
-            <span>Beranda</span>
+            <span>{{ __('visitor.home') }}</span>
         </a>
 
         {{-- Riwayat (visitor login) / Kamar (guest) --}}
@@ -375,35 +393,35 @@
             @if(Auth::user()->role === 'visitor')
                 <a href="{{ route('booking.history') }}"
                    class="bbar-item {{ request()->routeIs('booking.history') ? 'active' : '' }}"
-                   aria-label="Riwayat Reservasi">
+                   aria-label="{{ __('visitor.history') }}">
                     <div class="bbar-icon-wrap">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
                     </div>
-                    <span>Riwayat</span>
+                    <span>{{ __('visitor.history') }}</span>
                 </a>
             @else
-                <a href="{{ route('index') }}#kamar" class="bbar-item" aria-label="Kamar">
+                <a href="{{ route('index') }}#kamar" class="bbar-item" aria-label="{{ __('visitor.rooms') }}">
                     <div class="bbar-icon-wrap">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <span>Kamar</span>
+                    <span>{{ __('visitor.rooms') }}</span>
                 </a>
             @endif
         @else
-            <a href="{{ route('index') }}#kamar" class="bbar-item" aria-label="Kamar">
+            <a href="{{ route('index') }}#kamar" class="bbar-item" aria-label="{{ __('visitor.rooms') }}">
                 <div class="bbar-icon-wrap">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                     </svg>
                 </div>
-                <span>Kamar</span>
+                <span>{{ __('visitor.rooms') }}</span>
             </a>
         @endauth
 
@@ -435,14 +453,14 @@
         <button type="button"
                 onclick="openInfoSheet()"
                 class="bbar-item {{ request()->routeIs('about') || request()->routeIs('privacy-policy') || request()->routeIs('terms-conditions') ? 'active' : '' }}"
-                aria-label="Info">
+                aria-label="{{ __('visitor.info') }}">
             <div class="bbar-icon-wrap">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
             </div>
-            <span>Info</span>
+            <span>{{ __('visitor.info') }}</span>
         </button>
 
         {{-- Akun / Profil --}}
@@ -458,7 +476,7 @@
                 {{-- Visitor: langsung ke halaman profil --}}
                 <a href="{{ route('visitor.profile.index') }}"
                    class="bbar-item {{ request()->routeIs('visitor.profile.*') ? 'active' : '' }}"
-                   aria-label="Profil Saya">
+                   aria-label="{{ __('visitor.profile') }}">
                     <div class="bbar-icon-wrap" id="bbarAccountIcon">
                         @if($__bbarAvatar)
                             <img src="{{ $__bbarAvatar }}" alt="avatar"
@@ -472,11 +490,11 @@
                             </div>
                         @endif
                     </div>
-                    <span>Profil</span>
+                    <span>{{ __('visitor.profile') }}</span>
                 </a>
             @else
                 {{-- Admin / non-visitor: buka menu akun --}}
-                <button type="button" onclick="pubMobileMenu()" class="bbar-item" aria-label="Akun">
+                <button type="button" onclick="pubMobileMenu()" class="bbar-item" aria-label="{{ __('visitor.account') }}">
                     <div class="bbar-icon-wrap" id="bbarAccountIcon">
                         @if($__bbarAvatar)
                             <img src="{{ $__bbarAvatar }}" alt="avatar"
@@ -489,18 +507,18 @@
                             </div>
                         @endif
                     </div>
-                    <span>Akun</span>
+                    <span>{{ __('visitor.account') }}</span>
                 </button>
             @endif
         @else
-            <a href="{{ route('login') }}" class="bbar-item" aria-label="Masuk">
+            <a href="{{ route('login') }}" class="bbar-item" aria-label="{{ __('visitor.login') }}">
                 <div class="bbar-icon-wrap">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                     </svg>
                 </div>
-                <span>Masuk</span>
+                <span>{{ __('visitor.login') }}</span>
             </a>
         @endauth
 
@@ -521,8 +539,8 @@
                 </svg>
             </div>
             <div>
-                <p class="font-semibold text-slate-900 text-[0.875rem]">Tentang Kami</p>
-                <p class="text-[0.72rem] text-slate-400 mt-0.5">Profil &amp; sejarah penginapan</p>
+                <p class="font-semibold text-slate-900 text-[0.875rem]">{{ __('visitor.about_us') }}</p>
+                <p class="text-[0.72rem] text-slate-400 mt-0.5">{{ app()->getLocale() === 'en' ? 'Profile & history' : 'Profil & sejarah penginapan' }}</p>
             </div>
             <svg class="w-4 h-4 text-slate-300 ml-auto shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -536,8 +554,8 @@
                 </svg>
             </div>
             <div>
-                <p class="font-semibold text-slate-900 text-[0.875rem]">Kebijakan &amp; Privasi</p>
-                <p class="text-[0.72rem] text-slate-400 mt-0.5">Perlindungan data tamu</p>
+                <p class="font-semibold text-slate-900 text-[0.875rem]">{{ __('visitor.privacy_policy') }}</p>
+                <p class="text-[0.72rem] text-slate-400 mt-0.5">{{ app()->getLocale() === 'en' ? 'Guest data protection' : 'Perlindungan data tamu' }}</p>
             </div>
             <svg class="w-4 h-4 text-slate-300 ml-auto shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -551,13 +569,15 @@
                 </svg>
             </div>
             <div>
-                <p class="font-semibold text-slate-900 text-[0.875rem]">Syarat &amp; Ketentuan</p>
-                <p class="text-[0.72rem] text-slate-400 mt-0.5">Aturan penggunaan layanan</p>
+                <p class="font-semibold text-slate-900 text-[0.875rem]">{{ __('visitor.terms_conditions') }}</p>
+                <p class="text-[0.72rem] text-slate-400 mt-0.5">{{ app()->getLocale() === 'en' ? 'Service usage rules' : 'Aturan penggunaan layanan' }}</p>
             </div>
             <svg class="w-4 h-4 text-slate-300 ml-auto shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
         </a>
+
+        {{-- Language switcher di bottom sheet — DIHAPUS, dipindah ke halaman profil visitor --}}
     </div>
 </div>
 

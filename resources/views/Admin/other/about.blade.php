@@ -93,6 +93,28 @@ document.addEventListener('DOMContentLoaded', function () {
                         {{ $message }}
                     </p>
                 @enderror
+
+                {{-- Versi English --}}
+                <div class="mt-5 pt-5 border-t border-slate-100">
+                    <label class="flex items-center gap-2 text-[0.82rem] font-semibold text-slate-700 mb-2" for="aboutEnContent">
+                        About Us — English Version
+                        <span class="text-[0.68rem] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">EN</span>
+                    </label>
+                    <textarea
+                        name="about_en"
+                        id="aboutEnContent"
+                        rows="18"
+                        placeholder="Write the About page content in English here...&#10;&#10;Example:&#10;Our accommodation has been in operation since 2010, committed to providing the best service for every guest..."
+                        class="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50
+                               text-[0.875rem] text-slate-800 leading-relaxed resize-y
+                               focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100
+                               transition-colors"
+                        style="min-height: 320px; font-family: 'Inter', monospace;"
+                    >{{ old('about_en', $other->about_en) }}</textarea>
+                    @error('about_en')
+                        <p class="mt-2 text-[0.78rem] text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             {{-- Footer --}}

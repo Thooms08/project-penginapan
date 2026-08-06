@@ -83,7 +83,7 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
-        Kembali ke Beranda
+        {{ __('visitor.back_to_home') }}
     </a>
 
     <div class="other-hero">
@@ -94,24 +94,25 @@
             </svg>
         </div>
         <div>
-            <h1 class="other-hero-title">Kebijakan &amp; Privasi</h1>
+            <h1 class="other-hero-title">{{ __('visitor.privacy_policy') }}</h1>
             <p class="other-hero-sub">
-                {{ optional(\Modules\Profile\Models\ProfileHotel::first())->name ?? 'Penginapan' }}
+                {{ optional(\Modules\Profile\Models\ProfileHotel::first())->trans('name') ?? 'Penginapan' }}
             </p>
         </div>
     </div>
 
     <div class="other-content">
-        @if($other->privacy_policy)
-            {!! $other->privacy_policy !!}
+        @php $privacyContent = $other->trans('privacy_policy'); @endphp
+        @if($privacyContent)
+            {!! $privacyContent !!}
         @else
             <div class="other-empty">
                 <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                         d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                 </svg>
-                <p>Konten halaman ini belum tersedia.</p>
-                <p class="text-[0.78rem] mt-1">Silakan hubungi kami untuk informasi lebih lanjut.</p>
+                <p>{{ __('visitor.no_content') }}</p>
+                <p class="text-[0.78rem] mt-1">{{ __('visitor.no_content_sub') }}</p>
             </div>
         @endif
     </div>
@@ -122,14 +123,14 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            Tentang Kami
+            {{ __('visitor.about_us') }}
         </a>
         <a href="{{ route('terms-conditions') }}">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
-            Syarat &amp; Ketentuan
+            {{ __('visitor.terms_conditions') }}
         </a>
     </div>
 

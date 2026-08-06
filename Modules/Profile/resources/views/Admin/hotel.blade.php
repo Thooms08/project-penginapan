@@ -168,6 +168,20 @@
             @error('name')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
         </div>
 
+        {{-- Nama Hotel (English) --}}
+        <div class="mb-5">
+            <label class="label-base" for="name_en">
+                Hotel Name
+                <span class="ml-1.5 text-[0.7rem] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">EN</span>
+            </label>
+            <input id="name_en" name="name_en" type="text"
+                   value="{{ old('name_en', $hotel->name_en) }}"
+                   placeholder="e.g. Melati Indah Hotel"
+                   class="input-base {{ $errors->has('name_en') ? 'input-error' : '' }}"
+                   maxlength="255">
+            @error('name_en')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
+        </div>
+
         {{-- Deskripsi --}}
         <div class="mb-5">
             <div class="flex justify-between items-end mb-1.5">
@@ -181,6 +195,22 @@
             @error('description')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
         </div>
 
+        {{-- Deskripsi (English) --}}
+        <div class="mb-5">
+            <div class="flex justify-between items-end mb-1.5">
+                <label class="label-base mb-0" for="description_en">
+                    Hotel Description
+                    <span class="ml-1.5 text-[0.7rem] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">EN</span>
+                </label>
+                <span class="text-xs text-slate-400"><span id="descEnCount">{{ strlen(old('description_en', $hotel->description_en ?? '')) }}</span>/5000</span>
+            </div>
+            <textarea id="description_en" name="description_en" rows="5" maxlength="5000"
+            placeholder="Tell your hotel's strengths and uniqueness..."
+            class="input-base resize-none {{ $errors->has('description_en') ? 'input-error' : '' }}"
+            oninput="document.getElementById('descEnCount').textContent=this.value.length">{{ old('description_en', $hotel->description_en) }}</textarea>
+            @error('description_en')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
+        </div>
+
         {{-- Alamat --}}
         <div class="mb-5">
             <label class="label-base" for="address">Alamat</label>
@@ -188,6 +218,18 @@
                       placeholder="Jl. Contoh No. 1, Kelurahan, Kecamatan, Kota"
                       class="input-base resize-none {{ $errors->has('address') ? 'input-error' : '' }}">{{ old('address', $hotel->address) }}</textarea>
             @error('address')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
+        </div>
+
+        {{-- Alamat (English) --}}
+        <div class="mb-5">
+            <label class="label-base" for="address_en">
+                Address
+                <span class="ml-1.5 text-[0.7rem] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">EN</span>
+            </label>
+            <textarea id="address_en" name="address_en" rows="2" maxlength="500"
+                      placeholder="e.g. Jl. Example No. 1, Village, District, City"
+                      class="input-base resize-none {{ $errors->has('address_en') ? 'input-error' : '' }}">{{ old('address_en', $hotel->address_en) }}</textarea>
+            @error('address_en')<p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>@enderror
         </div>
     </div>
 

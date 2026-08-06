@@ -15,12 +15,30 @@ class ProfileHotel extends Model
     protected $fillable = [
         'logo',
         'name',
+        'name_en',
         'description',
+        'description_en',
         'wa',
         'email',
         'address',
+        'address_en',
         'maps',
     ];
+
+    /**
+     * Kembalikan nilai field sesuai locale aktif.
+     * Jika versi EN kosong, fallback ke versi ID.
+     */
+    public function trans(string $field): ?string
+    {
+        if (app()->getLocale() === 'en') {
+            $enValue = $this->getAttribute($field . '_en');
+            if (!empty($enValue)) {
+                return $enValue;
+            }
+        }
+        return $this->getAttribute($field);
+    }
 
     /**
      * Relasi ke foto-foto hotel.

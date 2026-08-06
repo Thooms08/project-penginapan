@@ -1,6 +1,6 @@
 @extends('Visitors.layouts.app')
 
-@section('title', 'Riwayat Reservasi')
+@section('title', __('visitor.hist_title'))
 
 @push('head')
 <style>
@@ -50,8 +50,8 @@
     {{-- Page header --}}
     <div class="flex items-center justify-between mb-5">
         <div>
-            <h1 class="text-[1.2rem] font-extrabold text-slate-900 leading-tight">Riwayat Reservasi</h1>
-            <p class="text-[.78rem] text-slate-400 mt-0.5">Semua riwayat pemesanan kamar Anda</p>
+            <h1 class="text-[1.2rem] font-extrabold text-slate-900 leading-tight">{{ __('visitor.hist_title') }}</h1>
+            <p class="text-[.78rem] text-slate-400 mt-0.5">{{ __('visitor.hist_subtitle') }}</p>
         </div>
         <a href="{{ route('index') }}#kamar"
            class="inline-flex items-center gap-1.5 text-[.8rem] font-semibold px-4 py-2
@@ -59,7 +59,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            Pesan Lagi
+            {{ __('visitor.hist_book_again') }}
         </a>
     </div>
 
@@ -96,7 +96,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span class="hidden sm:inline">Reservasi</span> Pending
+            <span class="hidden sm:inline">{{ __('visitor.hist_reservation') }}</span> {{ __('visitor.hist_tab_pending') }}
             <span class="hist-tab-badge">{{ $pendingBookings->total() }}</span>
         </button>
 
@@ -109,7 +109,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span class="hidden sm:inline">Reservasi</span> Sukses
+            <span class="hidden sm:inline">{{ __('visitor.hist_reservation') }}</span> {{ __('visitor.hist_tab_success') }}
             <span class="hist-tab-badge">{{ $successBookings->total() }}</span>
         </button>
 
@@ -122,7 +122,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span class="hidden sm:inline">Reservasi</span> Gagal
+            <span class="hidden sm:inline">{{ __('visitor.hist_reservation') }}</span> {{ __('visitor.hist_tab_failed') }}
             <span class="hist-tab-badge">{{ $failedBookings->total() }}</span>
         </button>
     </div>
@@ -137,8 +137,8 @@
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
-                <p class="empty-state-title">Tidak ada reservasi pending</p>
-                <p class="empty-state-desc">Reservasi dengan DP yang sudah dibayar dan menunggu pelunasan akan muncul di sini.</p>
+                <p class="empty-state-title">{{ __('visitor.hist_empty_pending_title') }}</p>
+                <p class="empty-state-desc">{{ __('visitor.hist_empty_pending_desc') }}</p>
             </div>
         @else
             @include('booking::Visitor.history.partials.pending-list', ['bookings' => $pendingBookings])
@@ -155,15 +155,15 @@
                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                     </svg>
                 </div>
-                <p class="empty-state-title">Belum ada reservasi lunas</p>
-                <p class="empty-state-desc">Reservasi bayar-penuh yang terkonfirmasi akan muncul di sini.</p>
+                <p class="empty-state-title">{{ __('visitor.hist_empty_success_title') }}</p>
+                <p class="empty-state-desc">{{ __('visitor.hist_empty_success_desc') }}</p>
                 <a href="{{ route('index') }}#kamar"
                    class="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-xl font-bold text-[.875rem]"
                    style="background:var(--y);color:var(--ytext);">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
-                    Pesan Kamar Sekarang
+                    {{ __('visitor.hist_book_now_cta') }}
                 </a>
             </div>
         @else
@@ -180,8 +180,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7"/>
                     </svg>
                 </div>
-                <p class="empty-state-title">Tidak ada reservasi gagal</p>
-                <p class="empty-state-desc">Bagus! Semua reservasi Anda berjalan lancar.</p>
+                <p class="empty-state-title">{{ __('visitor.hist_empty_fail_title') }}</p>
+                <p class="empty-state-desc">{{ __('visitor.hist_empty_fail_desc') }}</p>
             </div>
         @else
             @include('booking::Visitor.history.partials.fail-list', ['bookings' => $failedBookings])

@@ -91,6 +91,28 @@ document.addEventListener('DOMContentLoaded', function () {
                         {{ $message }}
                     </p>
                 @enderror
+
+                {{-- Versi English --}}
+                <div class="mt-5 pt-5 border-t border-slate-100">
+                    <label class="flex items-center gap-2 text-[0.82rem] font-semibold text-slate-700 mb-2" for="termsEnContent">
+                        Terms & Conditions — English Version
+                        <span class="text-[0.68rem] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">EN</span>
+                    </label>
+                    <textarea
+                        name="terms_conditions_en"
+                        id="termsEnContent"
+                        rows="18"
+                        placeholder="Write the Terms &amp; Conditions content in English here...&#10;&#10;Example:&#10;1. Guests must present valid identification at check-in.&#10;2. Cancellations must be made at least 24 hours before check-in..."
+                        class="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50
+                               text-[0.875rem] text-slate-800 leading-relaxed resize-y
+                               focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100
+                               transition-colors"
+                        style="min-height: 320px; font-family: 'Inter', monospace;"
+                    >{{ old('terms_conditions_en', $other->terms_conditions_en) }}</textarea>
+                    @error('terms_conditions_en')
+                        <p class="mt-2 text-[0.78rem] text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             <div class="flex items-center justify-between px-5 py-4 border-t border-slate-100 bg-slate-50/80">

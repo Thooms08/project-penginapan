@@ -3,9 +3,9 @@
     @php
         $cover = $booking->room?->coverPhoto?->path ?? null;
         $statusColor = match($booking->booking_status) {
-            'confirmed'   => ['bg'=>'#f0fdf4','txt'=>'#166534','label'=>'Terkonfirmasi'],
-            'checked_in'  => ['bg'=>'#eff6ff','txt'=>'#1e40af','label'=>'Sedang Menginap'],
-            'checked_out' => ['bg'=>'#f8fafc','txt'=>'#475569','label'=>'Selesai'],
+            'confirmed'   => ['bg'=>'#f0fdf4','txt'=>'#166534','label'=> __('visitor.hist_status_confirmed')],
+            'checked_in'  => ['bg'=>'#eff6ff','txt'=>'#1e40af','label'=> __('visitor.hist_status_checked_in')],
+            'checked_out' => ['bg'=>'#f8fafc','txt'=>'#475569','label'=> __('visitor.hist_status_checked_out')],
             default       => ['bg'=>'#fefce8','txt'=>'#854d0e','label'=>ucfirst($booking->booking_status)],
         };
     @endphp
@@ -34,7 +34,7 @@
                 <div class="flex items-start justify-between gap-3 mb-2">
                     <div class="min-w-0">
                         <p class="font-extrabold text-slate-900 text-[.95rem] leading-tight truncate">
-                            {{ $booking->room?->name ?? 'Kamar' }}
+                            {{ $booking->room?->trans('name') ?? __('visitor.breadcrumb_rooms') }}
                         </p>
                         <p class="text-[.72rem] text-slate-400 font-mono mt-0.5">
                             {{ $booking->booking_code }}
@@ -68,7 +68,7 @@
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
                                  text-[.68rem] font-bold"
                           style="background:var(--y50);color:var(--ytext);">
-                        {{ $booking->nights }} malam
+                        {{ __('visitor.hist_nights', ['n' => $booking->nights]) }}
                     </span>
                 </div>
 
@@ -86,16 +86,16 @@
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
-                            Lunas
+                            {{ __('visitor.hist_paid') }}
                         </span>
                     </div>
                     <div class="text-right">
-                        <p class="text-[.68rem] text-slate-400">Total</p>
+                        <p class="text-[.68rem] text-slate-400">{{ __('visitor.hist_total') }}</p>
                         <p class="text-[.92rem] font-extrabold" style="color:var(--ytext);">
                             {{ $booking->formatted_total }}
                         </p>
                         @if($booking->payment_type === 'full')
-                            <p class="text-[.68rem] text-green-600 font-semibold">Bayar Lunas ✓</p>
+                            <p class="text-[.68rem] text-green-600 font-semibold">{{ __('visitor.hist_full_paid') }}</p>
                         @endif
                     </div>
                 </div>

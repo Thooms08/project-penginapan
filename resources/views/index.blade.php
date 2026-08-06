@@ -180,15 +180,16 @@
          style="z-index:4;">
         <h1 class="text-white font-extrabold text-2xl md:text-4xl lg:text-5xl
                    leading-tight tracking-tight mb-2 drop-shadow-lg max-w-xl">
-            {{ $__hotelName }}
+            {{ $hotel?->trans('name') ?? $__hotelName }}
         </h1>
-        @if($hotel?->description)
+        @php $heroDesc = $hotel?->trans('description'); @endphp
+        @if($heroDesc)
             <p class="text-white/75 text-[0.9rem] md:text-base max-w-lg leading-relaxed drop-shadow">
-                {{ Str::limit($hotel->description, 120) }}
+                {{ Str::limit($heroDesc, 120) }}
             </p>
         @else
             <p class="text-white/70 text-[0.9rem] md:text-base max-w-lg drop-shadow">
-                Temukan kenyamanan menginap yang tak terlupakan.
+                {{ app()->getLocale() === 'en' ? 'Find the comfort of an unforgettable stay.' : 'Temukan kenyamanan menginap yang tak terlupakan.' }}
             </p>
         @endif
     </div>
@@ -213,27 +214,27 @@
         {{-- Title --}}
         <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
             <div>
-                <h2 class="text-[1rem] font-bold text-slate-900">Cari Kamar</h2>
-                <p class="text-[0.78rem] text-slate-500 mt-0.5">Filter berdasarkan tanggal dan ketersediaan</p>
+                <h2 class="text-[1rem] font-bold text-slate-900">{{ __('visitor.search_room') }}</h2>
+                <p class="text-[0.78rem] text-slate-500 mt-0.5">{{ __('visitor.filter_by_date') }}</p>
             </div>
             {{-- Kamar tersedia badge --}}
             <span class="text-[0.78rem] font-semibold px-3 py-1 rounded-full"
                   style="background:#fefce8;color:#713f12;border:1px solid #fef9c3;"
                   id="availableBadge">
-                {{ $rooms->where('status', 'available')->count() }} tersedia
+                {{ $rooms->where('status', 'available')->count() }} {{ __('visitor.available_badge') }}
             </span>
         </div>
 
         {{-- Filter tabs --}}
         <div class="flex gap-2 mb-4 flex-wrap">
             <button class="filter-tab active" onclick="filterRooms('all', this)" data-filter="all">
-                Semua
+                {{ __('visitor.all') }}
             </button>
             <button class="filter-tab" onclick="filterRooms('available', this)" data-filter="available">
-                Tersedia
+                {{ __('visitor.available') }}
             </button>
             <button class="filter-tab" onclick="filterRooms('unavailable', this)" data-filter="unavailable">
-                Penuh
+                {{ __('visitor.full') }}
             </button>
         </div>
 
@@ -248,7 +249,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
-                    Check In
+                    {{ __('visitor.check_in') }}
                 </label>
                 <input type="date" id="check_in" name="check_in"
                        value="{{ request('check_in', date('Y-m-d')) }}"
@@ -267,7 +268,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
-                    Check Out
+                    {{ __('visitor.check_out') }}
                 </label>
                 <input type="date" id="check_out" name="check_out"
                        value="{{ request('check_out', date('Y-m-d', strtotime('+1 day'))) }}"
@@ -291,7 +292,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
-                    Cari Kamar
+                    {{ __('visitor.search') }}
                 </button>
             </div>
         </form>
@@ -303,7 +304,7 @@
                     d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
             </svg>
             <span class="text-[0.78rem] text-slate-500" id="nightsText">
-                Menampilkan harga per malam
+                {{ __('visitor.nights_info') }}
             </span>
         </div>
     </div>
@@ -318,9 +319,9 @@
         {{-- Section header --}}
         <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
             <div>
-                <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Pilihan Kamar</h2>
+                <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">{{ __('visitor.room_choices') }}</h2>
                 <p class="text-[0.82rem] text-slate-500 mt-0.5">
-                    Semua kamar ditampilkan — tersedia maupun penuh
+                    {{ __('visitor.all_rooms_shown') }}
                 </p>
             </div>
             @if(request('check_in') && request('check_out'))

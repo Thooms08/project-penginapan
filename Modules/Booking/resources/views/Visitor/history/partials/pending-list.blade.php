@@ -6,11 +6,8 @@
             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
     </svg>
     <div>
-        <p class="font-bold text-amber-800 mb-0.5">Down Payment Terkonfirmasi</p>
-        <p class="text-amber-700 leading-relaxed">
-            Kamar Anda sudah diamankan. Lunasi sisa pembayaran saat check-in di tempat.
-            Pastikan hadir sesuai tanggal yang telah dipesan.
-        </p>
+        <p class="font-bold text-amber-800 mb-0.5">{{ __('visitor.hist_dp_confirmed_title') }}</p>
+        <p class="text-amber-700 leading-relaxed">{{ __('visitor.hist_dp_confirmed_desc') }}</p>
     </div>
 </div>
 
@@ -27,7 +24,7 @@
             {{-- Room photo --}}
             <div class="shrink-0 w-full sm:w-32 h-36 sm:h-auto" style="min-height:100px;">
                 @if($cover)
-                    <img src="{{ asset($cover) }}" alt="{{ $booking->room?->name }}"
+                    <img src="{{ asset($cover) }}" alt="{{ $booking->room?->trans('name') }}"
                          class="w-full h-full object-cover">
                 @else
                     <div class="w-full h-full flex items-center justify-center"
@@ -47,7 +44,7 @@
                 <div class="flex items-start justify-between gap-3 mb-2">
                     <div class="min-w-0">
                         <p class="font-extrabold text-slate-900 text-[.95rem] leading-tight truncate">
-                            {{ $booking->room?->name ?? 'Kamar' }}
+                            {{ $booking->room?->trans('name') ?? __('visitor.breadcrumb_rooms') }}
                         </p>
                         <p class="text-[.72rem] text-slate-400 font-mono mt-0.5">
                             {{ $booking->booking_code }}
@@ -61,7 +58,7 @@
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                             </svg>
-                            Sedang Menginap
+                            {{ __('visitor.hist_status_checked_in_pending') }}
                         </span>
                     @else
                         <span class="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full
@@ -71,7 +68,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            DP Terkonfirmasi
+                            {{ __('visitor.hist_status_dp_confirmed') }}
                         </span>
                     @endif
                 </div>
@@ -92,7 +89,7 @@
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full
                                  text-[.68rem] font-bold"
                           style="background:var(--y50);color:var(--ytext);">
-                        {{ $booking->nights }} malam
+                        {{ __('visitor.hist_pending_nights', ['n' => $booking->nights]) }}
                     </span>
                 </div>
 
@@ -100,19 +97,19 @@
                 <div class="rounded-xl p-3 mb-3" style="background:#f8fafc;border:1px solid #e2e8f0;">
                     <div class="grid grid-cols-3 gap-2 text-center">
                         <div>
-                            <p class="text-[.65rem] text-slate-400 mb-0.5">Total Biaya</p>
+                            <p class="text-[.65rem] text-slate-400 mb-0.5">{{ __('visitor.hist_total_cost') }}</p>
                             <p class="text-[.82rem] font-extrabold text-slate-700">
                                 {{ $booking->formatted_total }}
                             </p>
                         </div>
                         <div style="border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0;">
-                            <p class="text-[.65rem] text-slate-400 mb-0.5">DP Sudah Dibayar</p>
+                            <p class="text-[.65rem] text-slate-400 mb-0.5">{{ __('visitor.hist_dp_paid') }}</p>
                             <p class="text-[.82rem] font-extrabold text-green-700">
                                 {{ $booking->formatted_amount_paid }}
                             </p>
                         </div>
                         <div>
-                            <p class="text-[.65rem] text-amber-600 mb-0.5 font-semibold">Sisa Pelunasan</p>
+                            <p class="text-[.65rem] text-amber-600 mb-0.5 font-semibold">{{ __('visitor.hist_remaining') }}</p>
                             <p class="text-[.82rem] font-extrabold" style="color:#b45309;">
                                 {{ $booking->formatted_amount_remaining }}
                             </p>
@@ -126,8 +123,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                     </svg>
-                    Lunasi <strong>{{ $booking->formatted_amount_remaining }}</strong> saat check-in pada
-                    <strong>{{ $booking->formatted_check_in }}</strong>
+                    {!! __('visitor.hist_reminder', ['amount' => '<strong>' . $booking->formatted_amount_remaining . '</strong>', 'date' => '<strong>' . $booking->formatted_check_in . '</strong>']) !!}
                 </div>
 
             </div>

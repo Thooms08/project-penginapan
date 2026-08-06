@@ -31,18 +31,22 @@ class RoomController extends Controller
     {
         $request->validate([
             'name'                            => 'required|string|max:255',
+            'name_en'                         => 'nullable|string|max:255',
             'capacity'                        => 'required|integer|min:1|max:100',
             'price'                           => 'required|numeric|min:0',
             'status'                          => 'required|in:available,unavailable',
             'description'                     => 'nullable|string|max:5000',
+            'description_en'                  => 'nullable|string|max:5000',
             'discount_type'                   => 'nullable|in:none,percentage,fixed',
             'discount_value'                  => 'nullable|numeric|min:0',
             'discount_min_nights'             => 'nullable|integer|min:0',
             'photos.*'                        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:8192',
             'facilities'                      => 'nullable|array',
             'facilities.*.name'               => 'required_with:facilities|string|max:100',
+            'facilities.*.name_en'            => 'nullable|string|max:100',
             'facilities.*.qty'                => 'required_with:facilities|integer|min:1',
             'facilities.*.description'        => 'nullable|string|max:150',
+            'facilities.*.description_en'     => 'nullable|string|max:150',
         ], [
             'name.required'       => 'Nama kamar wajib diisi.',
             'capacity.required'   => 'Kapasitas wajib diisi.',
@@ -56,10 +60,12 @@ class RoomController extends Controller
         DB::transaction(function () use ($request) {
             $room = Room::create([
                 'name'                 => $request->name,
+                'name_en'              => $request->name_en,
                 'capacity'             => $request->capacity,
                 'price'                => $request->price,
                 'status'               => $request->status,
                 'description'          => $request->description,
+                'description_en'       => $request->description_en,
                 'discount_type'        => $request->discount_type ?? 'none',
                 'discount_value'       => $request->discount_value ?? 0,
                 'discount_min_nights'  => $request->discount_min_nights ?? 0,
@@ -70,9 +76,11 @@ class RoomController extends Controller
                 foreach ($request->facilities as $f) {
                     if (!empty($f['name'])) {
                         $room->facilities()->create([
-                            'name'        => $f['name'],
-                            'qty'         => $f['qty'] ?? 1,
-                            'description' => $f['description'] ?? null,
+                            'name'           => $f['name'],
+                            'name_en'        => $f['name_en'] ?? null,
+                            'qty'            => $f['qty'] ?? 1,
+                            'description'    => $f['description'] ?? null,
+                            'description_en' => $f['description_en'] ?? null,
                         ]);
                     }
                 }
@@ -104,18 +112,22 @@ class RoomController extends Controller
 
         $request->validate([
             'name'                            => 'required|string|max:255',
+            'name_en'                         => 'nullable|string|max:255',
             'capacity'                        => 'required|integer|min:1|max:100',
             'price'                           => 'required|numeric|min:0',
             'status'                          => 'required|in:available,unavailable',
             'description'                     => 'nullable|string|max:5000',
+            'description_en'                  => 'nullable|string|max:5000',
             'discount_type'                   => 'nullable|in:none,percentage,fixed',
             'discount_value'                  => 'nullable|numeric|min:0',
             'discount_min_nights'             => 'nullable|integer|min:0',
             'photos.*'                        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:8192',
             'facilities'                      => 'nullable|array',
             'facilities.*.name'               => 'required_with:facilities|string|max:100',
+            'facilities.*.name_en'            => 'nullable|string|max:100',
             'facilities.*.qty'                => 'required_with:facilities|integer|min:1',
             'facilities.*.description'        => 'nullable|string|max:150',
+            'facilities.*.description_en'     => 'nullable|string|max:150',
             'delete_photos'                   => 'nullable|array',
             'delete_photos.*'                 => 'integer|exists:room_photos,id',
         ]);
@@ -123,10 +135,12 @@ class RoomController extends Controller
         DB::transaction(function () use ($request, $room) {
             $room->update([
                 'name'                 => $request->name,
+                'name_en'              => $request->name_en,
                 'capacity'             => $request->capacity,
                 'price'                => $request->price,
                 'status'               => $request->status,
                 'description'          => $request->description,
+                'description_en'       => $request->description_en,
                 'discount_type'        => $request->discount_type ?? 'none',
                 'discount_value'       => $request->discount_value ?? 0,
                 'discount_min_nights'  => $request->discount_min_nights ?? 0,
@@ -153,9 +167,11 @@ class RoomController extends Controller
                 foreach ($request->facilities as $f) {
                     if (!empty($f['name'])) {
                         $room->facilities()->create([
-                            'name'        => $f['name'],
-                            'qty'         => $f['qty'] ?? 1,
-                            'description' => $f['description'] ?? null,
+                            'name'           => $f['name'],
+                            'name_en'        => $f['name_en'] ?? null,
+                            'qty'            => $f['qty'] ?? 1,
+                            'description'    => $f['description'] ?? null,
+                            'description_en' => $f['description_en'] ?? null,
                         ]);
                     }
                 }
