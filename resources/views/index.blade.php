@@ -141,8 +141,6 @@
 <section class="hero-slider" id="heroSlider" aria-label="Foto Hotel">
 
 
-<!-- HALLLO BRO IGEUIFHSIFUSGFIY -->
-
     @php
         $__hotelName = $hotel?->name ?: 'Penginapan';
         $__photos    = $hotelPhotos;
